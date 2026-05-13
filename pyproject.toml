@@ -26,6 +26,9 @@ dependencies = [
     "rich>=13.7",
     "tqdm>=4.66",
     "graphviz>=0.20",
+    "sentence-transformers>=3.0",
+    "faiss-cpu>=1.8",
+    "numpy>=1.26",
 ]
 
 [project.scripts]
