@@ -25,6 +25,7 @@ dependencies = [
     "typer>=0.12",
     "rich>=13.7",
     "tqdm>=4.66",
+    "graphviz>=0.20",
 ]
 
 [project.scripts]
