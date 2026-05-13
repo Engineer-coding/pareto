@@ -14,7 +14,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, field_validator
 
 
 class DocumentFormat(str, Enum):
@@ -94,6 +94,26 @@ class Document(BaseModel):
     Domain-specific or reader-specific metadata.
     Examples: {"page_count": 14, "language": "en", "legal_jurisdiction": "TR"}
     """
+
+    # ── validators ─────────────────────────────────────────────────────────
+    @field_validator("content", mode="before")
+    @classmethod
+    def _strip_bom_and_normalize(cls, v: str) -> str:
+        """
+        Defensive cleanup applied to every Document's content:
+          * remove leading UTF-8/UTF-16 BOM if present (common on Windows files)
+          * normalize stray carriage returns
+
+        This runs before any other field logic, so all downstream consumers
+        (chunker, indexer, embeddings) see clean text.
+        """
+        if not isinstance(v, str) or not v:
+            return v
+        # Strip BOMs (UTF-8 EF BB BF decodes to \ufeff)
+        v = v.lstrip("\ufeff")
+        # Normalize Windows-style line endings to Unix
+        v = v.replace("\r\n", "\n").replace("\r", "\n")
+        return v
 
     # ── computed ───────────────────────────────────────────────────────────
     @computed_field  # type: ignore[prop-decorator]
