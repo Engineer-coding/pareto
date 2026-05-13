@@ -179,3 +179,44 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# === Pareto Project Specific ===
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node / Next.js (will be needed later)
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Pareto build artifacts
+benchmarks/results/*.json
+!benchmarks/results/.gitkeep
+
+# Local data — large corpus files won't be committed
+benchmarks/corpus/**/*.pdf
+benchmarks/corpus/**/*.docx
+!benchmarks/corpus/.gitkeep
+
+# Cache directories
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
