@@ -20,8 +20,10 @@ from rich.table import Table
 
 from pareto.ingestion import load_directory
 
-from pareto.chunking import HierarchicalChunker, render_graphviz, render_rich_tree
+from pareto.chunking import HierarchicalChunker, render_graphviz, render_rich_tree, chunk_directory, save_report
 from pareto.ingestion import read_file
+
+
 
 app = typer.Typer(
     name="pareto",
@@ -135,6 +137,70 @@ def chunk(
             console.print(f"\n[green]Image written:[/green] {out}")
         except (ImportError, RuntimeError) as e:
             console.print(f"\n[red]Image export failed:[/red] {e}")
+
+@app.command("chunk-corpus")
+def chunk_corpus(
+    root: Path = typer.Argument(
+        ..., exists=True, file_okay=False, help="Corpus directory to process."
+    ),
+    output: Path | None = typer.Option(
+        None, "--output", "-o",
+        help="Where to save the JSON report. Default: benchmarks/results/chunking_report.json",
+    ),
+    show_failures: bool = typer.Option(
+        False, "--show-failures", help="Print every failed source path.",
+    ),
+) -> None:
+    """Chunk every supported document under a corpus directory and emit a JSON report."""
+    console.print(f"[bold]Chunking corpus:[/bold] {root}")
+    _, report = chunk_directory(root)
+
+    # ── summary table ────────────────────────────────────────────────────
+    table = Table(title="Per-Document Chunking Stats", show_lines=False)
+    table.add_column("#", justify="right", style="dim")
+    table.add_column("Format", style="cyan")
+    table.add_column("Title", style="green")
+    table.add_column("Chars", justify="right")
+    table.add_column("Nodes", justify="right")
+    table.add_column("Leaves", justify="right")
+    table.add_column("Depth", justify="right")
+    table.add_column("Avg leaf", justify="right")
+
+    for i, d in enumerate(report.per_document, start=1):
+        table.add_row(
+            str(i),
+            d.format,
+            (d.title or Path(d.source).stem)[:40],
+            f"{d.content_length:,}",
+            str(d.num_nodes),
+            str(d.num_leaves),
+            str(d.depth),
+            f"{d.avg_leaf_length:.0f}",
+        )
+    console.print(table)
+
+    # ── aggregates ───────────────────────────────────────────────────────
+    console.print()
+    console.print(f"[bold]Documents processed:[/bold] {report.num_documents}")
+    console.print(f"[bold]Total characters:[/bold] {report.total_chars:,}")
+    console.print(f"[bold]Total chunk-tree nodes:[/bold] {report.total_nodes}")
+    console.print(f"[bold]Total leaves (indexable chunks):[/bold] {report.total_leaves}")
+    console.print(f"[bold]Format distribution:[/bold] {report.formats}")
+
+    if report.failures:
+        console.print()
+        console.print(f"[red]Failures: {report.num_failed}[/red]")
+        if show_failures:
+            for f in report.failures:
+                console.print(f"  • {f['source']}: {f['error']}")
+        else:
+            console.print("[dim]  (use --show-failures to list them)[/dim]")
+
+    # ── persist JSON report ──────────────────────────────────────────────
+    out_path = output or Path("benchmarks/results/chunking_report.json")
+    saved = save_report(report, out_path)
+    console.print()
+    console.print(f"[green]Report written:[/green] {saved}")
 
 
 if __name__ == "__main__":
