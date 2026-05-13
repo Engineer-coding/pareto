@@ -1,0 +1,26 @@
+digraph chunk_tree_1b61679a {
+	graph [bgcolor=white rankdir=TB splines=ortho]
+	node [fontname=Helvetica fontsize=10 style=filled]
+	edge [color="#888888"]
+	"3ebed4c4-b687-4c25-92ec-eba3e020b2b4" [label="[root]\nArchitecture\nlen=0" fillcolor="#fde2e4" shape=doubleoctagon]
+	"a0af5dcd-50a1-4335-9285-89108a6b564a" [label="[section L2]\nBackground\nlen=0" fillcolor="#cde7f0" shape=box]
+	"395c5a1a-8498-4079-bcce-b849437b800e" [label="[section L2]\nGoals\nlen=0" fillcolor="#cde7f0" shape=box]
+	"71bc4809-7820-45bf-9128-2789d2968852" [label="[section L1]\nArchitecture\nlen=0" fillcolor="#cde7f0" shape=box]
+	"d3a867d0-ff07-41ff-abb0-32e8450f70f8" [label="[section L2]\nIngestion Layer\nlen=0" fillcolor="#cde7f0" shape=box]
+	"c0e747a1-60dc-433e-b2da-c262d3aed996" [label="[section L2]\nChunking Layer\nlen=0" fillcolor="#cde7f0" shape=box]
+	"10a6bd53-d0f7-4ff7-a974-45f9eae7f32b" [label="[paragraph]\nModern RAG systems are expensive due to high LLM call volume…\nlen=115" fillcolor="#d4edda" shape=note]
+	"04c84b62-5901-46f4-9ec3-e7bc63944e21" [label="[paragraph]\nWe aim to reduce token usage by 40 percent.\nlen=43" fillcolor="#d4edda" shape=note]
+	"8c53135e-deb1-4c65-aaf7-67e601fb1a00" [label="[paragraph]\nThe system has seven layers.\nlen=28" fillcolor="#d4edda" shape=note]
+	"6ee8b54d-1936-4ae2-988b-fafcc3773cc3" [label="[paragraph]\nDocuments are parsed into a uniform model.\nlen=42" fillcolor="#d4edda" shape=note]
+	"23f41720-c4dd-4897-80de-16ac99ca9ff3" [label="[paragraph]\nHierarchical tree-based chunking preserves structure.\nlen=53" fillcolor="#d4edda" shape=note]
+	"3ebed4c4-b687-4c25-92ec-eba3e020b2b4" -> "a0af5dcd-50a1-4335-9285-89108a6b564a"
+	"3ebed4c4-b687-4c25-92ec-eba3e020b2b4" -> "395c5a1a-8498-4079-bcce-b849437b800e"
+	"3ebed4c4-b687-4c25-92ec-eba3e020b2b4" -> "71bc4809-7820-45bf-9128-2789d2968852"
+	"a0af5dcd-50a1-4335-9285-89108a6b564a" -> "10a6bd53-d0f7-4ff7-a974-45f9eae7f32b"
+	"395c5a1a-8498-4079-bcce-b849437b800e" -> "04c84b62-5901-46f4-9ec3-e7bc63944e21"
+	"71bc4809-7820-45bf-9128-2789d2968852" -> "8c53135e-deb1-4c65-aaf7-67e601fb1a00"
+	"71bc4809-7820-45bf-9128-2789d2968852" -> "d3a867d0-ff07-41ff-abb0-32e8450f70f8"
+	"71bc4809-7820-45bf-9128-2789d2968852" -> "c0e747a1-60dc-433e-b2da-c262d3aed996"
+	"d3a867d0-ff07-41ff-abb0-32e8450f70f8" -> "6ee8b54d-1936-4ae2-988b-fafcc3773cc3"
+	"c0e747a1-60dc-433e-b2da-c262d3aed996" -> "23f41720-c4dd-4897-80de-16ac99ca9ff3"
+}

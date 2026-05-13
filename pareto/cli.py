@@ -20,6 +20,9 @@ from rich.table import Table
 
 from pareto.ingestion import load_directory
 
+from pareto.chunking import HierarchicalChunker, render_graphviz, render_rich_tree
+from pareto.ingestion import read_file
+
 app = typer.Typer(
     name="pareto",
     help="Cost-optimized RAG infrastructure — CLI.",
@@ -40,6 +43,7 @@ def ingest(
     limit: int | None = typer.Option(None, "--limit", "-n", help="Stop after N documents."),
     show_extra: bool = typer.Option(False, "--show-extra", help="Print per-document extra metadata."),
 ) -> None:
+    
     """Walk a corpus directory, parse every supported file, and summarize."""
     console.print(f"[bold]Loading documents from:[/bold] {root}")
     docs, failures = load_directory(root)
@@ -95,6 +99,42 @@ def ingest(
         console.print("[bold]Extra metadata (first 3 documents):[/bold]")
         for d in docs[:3]:
             console.print(f"  • {Path(d.source).name}: {d.extra}")
+
+
+@app.command()
+def chunk(
+    path: Path = typer.Argument(..., exists=True, dir_okay=False, help="Document file to chunk."),
+    image: Path | None = typer.Option(
+        None, "--image", "-o",
+        help="If given, also export a graphviz image to this path (without extension).",
+    ),
+    image_format: str = typer.Option(
+        "png", "--format", "-f", help="Graphviz output format: png, svg, pdf.",
+    ),
+) -> None:
+    """Parse one document, build its chunk tree, and print/render the structure."""
+    console.print(f"[bold]Reading:[/bold] {path}")
+    doc = read_file(path)
+    console.print(f"[dim]→ {doc.short_repr()}[/dim]")
+
+    chunker = HierarchicalChunker()
+    tree = chunker.chunk(doc)
+
+    console.print()
+    console.print(
+        f"[bold]Tree:[/bold] {tree.num_nodes} nodes, "
+        f"{tree.num_leaves} leaves, depth {tree.depth()}"
+    )
+    console.print()
+
+    render_rich_tree(tree, console=console)
+
+    if image is not None:
+        try:
+            out = render_graphviz(tree, image, format=image_format)
+            console.print(f"\n[green]Image written:[/green] {out}")
+        except (ImportError, RuntimeError) as e:
+            console.print(f"\n[red]Image export failed:[/red] {e}")
 
 
 if __name__ == "__main__":
