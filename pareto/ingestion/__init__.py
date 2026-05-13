@@ -1,6 +1,7 @@
 """Document ingestion: readers for PDF, DOCX, MD, HTML, TXT → Document."""
 
 from pareto.ingestion.base import BaseReader
+from pareto.ingestion.loader import discover_files, load_directory
 from pareto.ingestion.models import Document, DocumentFormat, StructuralHint
 from pareto.ingestion.readers import (
     DEFAULT_READERS,
@@ -16,4 +17,6 @@ __all__ = [
     "DEFAULT_READERS",
     "get_reader_for",
     "read_file",
+    "discover_files",
+    "load_directory",
 ]
