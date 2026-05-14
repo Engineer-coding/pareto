@@ -92,7 +92,11 @@ class SentenceTransformerEmbedder(BaseEmbedder):
         self._model_name = model_name
         self._normalize = normalize
         self._model = SentenceTransformer(model_name, device=device)
-        self._dim = int(self._model.get_sentence_embedding_dimension())
+        # Forward-compatible: ST renamed this method; try the new name first.
+        if hasattr(self._model, "get_embedding_dimension"):
+            self._dim = int(self._model.get_embedding_dimension())
+        else:
+            self._dim = int(self._model.get_sentence_embedding_dimension())
         self._query_prefix, self._passage_prefix = _prefixes_for(model_name)
 
     # ── BaseEmbedder API ──────────────────────────────────────────────────
