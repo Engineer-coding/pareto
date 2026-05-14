@@ -1,6 +1,11 @@
 """
 Tree-based chunk representation for hierarchical retrieval.
 
+ChunkNode ids are DETERMINISTIC — derived from (document_id, kind, level,
+start_char, content_prefix). The same (document, splitting config) always
+produces the same node ids, which makes re-indexing idempotent: an existing
+vector store can detect that a chunk is already indexed and skip embedding it.
+
 A document is represented as a tree:
     DocumentRoot
     ├── Section (H1)
@@ -19,56 +24,80 @@ parents (context). This is the "small-to-big" retrieval pattern.
 
 from __future__ import annotations
 
-import uuid
+import hashlib
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class NodeKind(str, Enum):
     """The role a node plays in the chunk tree."""
 
-    ROOT = "root"          # the document itself
-    SECTION = "section"    # a heading block (any level)
-    PARAGRAPH = "paragraph"  # a leaf chunk of text
-    PAGE = "page"          # PDF page boundary (when no headings exist)
+    ROOT = "root"
+    SECTION = "section"
+    PARAGRAPH = "paragraph"
+    PAGE = "page"
 
 
 class ChunkNode(BaseModel):
     """A node in the hierarchical chunk tree."""
 
     # ── identity ──────────────────────────────────────────────────────────
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: str | None = None
+    """Deterministic id. Auto-derived from (document_id, kind, level, start_char, content) if None."""
+
     document_id: str
     """The id of the source Document this node belongs to."""
 
     # ── tree links ────────────────────────────────────────────────────────
     parent_id: str | None = None
-    """The id of the parent node. None for root."""
-
     children_ids: list[str] = Field(default_factory=list)
-    """Ids of direct children, in document order."""
 
     # ── content ───────────────────────────────────────────────────────────
     kind: NodeKind
     level: int = 0
-    """For sections, the heading level (1 = H1). For other kinds, 0."""
-
     content: str = ""
-    """The text body of this node. For internal nodes, may be empty (or a title)."""
-
     title: str | None = None
-    """Heading text for sections; None for paragraphs."""
 
     # ── position in source ────────────────────────────────────────────────
     start_char: int = 0
     end_char: int = 0
-    """Character offsets in the original Document.content."""
 
     # ── extensibility ─────────────────────────────────────────────────────
     extra: dict[str, Any] = Field(default_factory=dict)
-    """Reader-/chunker-specific metadata (e.g. page number, token count)."""
+
+    # ── validators ────────────────────────────────────────────────────────
+    @model_validator(mode="after")
+    def _assign_deterministic_id(self) -> "ChunkNode":
+        """Compute a stable id from structural fields if none was supplied."""
+        if not self.id:
+            self.id = self.compute_id(
+                self.document_id, self.kind.value, self.level, self.start_char, self.content
+            )
+        return self
+
+    @staticmethod
+    def compute_id(
+        document_id: str,
+        kind: str,
+        level: int,
+        start_char: int,
+        content: str,
+    ) -> str:
+        """
+        Stable id derived from the chunk's structural identity.
+
+        We hash a tuple that uniquely identifies a chunk within a document:
+        (document_id, kind, level, start_char, content[:512]).
+        Truncating content to 512 chars keeps the hash input bounded; for
+        the chunk-size range we use (200-1000 chars), full content typically
+        fits anyway, so it's a no-op in practice.
+        """
+        raw = (
+            f"{document_id}\x00{kind}\x00{level}\x00{start_char}\x00{content[:512]}"
+        ).encode("utf-8")
+        return hashlib.sha256(raw).hexdigest()[:32]
 
     # ── helpers ───────────────────────────────────────────────────────────
     @property
@@ -139,12 +168,7 @@ class ChunkTree(BaseModel):
             self._collect_leaves(child_id, out)
 
     def ancestors(self, node_id: str) -> list[ChunkNode]:
-        """
-        Ancestors from immediate parent up to the root, in that order.
-
-        Used by parent-context expansion: given a matching leaf, walk up to
-        find the broader context to feed the LLM.
-        """
+        """Ancestors from immediate parent up to the root."""
         path: list[ChunkNode] = []
         current = self.nodes[node_id]
         while current.parent_id is not None:

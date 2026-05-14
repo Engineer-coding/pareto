@@ -21,13 +21,15 @@ Algorithm (high level):
 Design choices:
     * Char offsets are authoritative. Hints carry start_char from the
       reader; we never re-discover structure here.
-    * The algorithm is deterministic and pure — same Document + same config
-      always produce the same tree. This is critical for caching and benchmarks.
+    * Node ids are DETERMINISTIC (computed by ChunkNode model validator
+      from document_id + kind + level + start_char + content). This makes
+      re-chunking the same document produce the same ids, which downstream
+      enables idempotent re-indexing.
+    * The algorithm is pure — same Document + same config always produce
+      the same tree. Critical for caching and benchmarks.
 """
 
 from __future__ import annotations
-
-import uuid
 
 from pareto.chunking._splitters import merge_small_pieces, recursive_split
 from pareto.chunking.config import ChunkerConfig
@@ -45,31 +47,30 @@ class HierarchicalChunker:
 
     def chunk(self, document: Document) -> ChunkTree:
         """Build and return the ChunkTree for one Document."""
-        root_id = str(uuid.uuid4())
-        tree = ChunkTree(document_id=document.id, root_id=root_id)
-
+        # Build the root first; its id is derived deterministically by the
+        # ChunkNode model validator from its structural fields.
         root = ChunkNode(
-            id=root_id,
             document_id=document.id,
             kind=NodeKind.ROOT,
             title=document.title,
             start_char=0,
             end_char=len(document.content),
         )
+        tree = ChunkTree(document_id=document.id, root_id=root.id)
         tree.add(root)
 
         # Step 1: build the section skeleton from heading hints
         headings = [h for h in document.structural_hints if h.kind == "heading"]
         if headings:
-            self._build_section_tree(tree, root_id, document, headings)
+            self._build_section_tree(tree, root.id, document, headings)
         else:
             # No headings: the whole document is a single "section" child of root
-            self._add_flat_section(tree, root_id, document)
+            self._add_flat_section(tree, root.id, document)
 
         # Step 2: populate EVERY section with its intro paragraphs.
         # A section's intro is the text between its heading and its first
         # child section (or the whole body if no child sections exist).
-        # This is what preserves prose that appears before nested subsections.
+        # This preserves prose that appears before nested subsections.
         all_sections = [
             n for n in tree.nodes.values() if n.kind == NodeKind.SECTION
         ]
@@ -121,7 +122,6 @@ class HierarchicalChunker:
             )
 
             section = ChunkNode(
-                id=str(uuid.uuid4()),
                 document_id=document.id,
                 parent_id=parent_id,
                 kind=NodeKind.SECTION,
@@ -143,7 +143,6 @@ class HierarchicalChunker:
         if not document.content.strip():
             return
         section = ChunkNode(
-            id=str(uuid.uuid4()),
             document_id=document.id,
             parent_id=root_id,
             kind=NodeKind.SECTION,
@@ -221,7 +220,6 @@ class HierarchicalChunker:
             cursor = end
 
             leaf = ChunkNode(
-                id=str(uuid.uuid4()),
                 document_id=document.id,
                 parent_id=section.id,
                 kind=NodeKind.PARAGRAPH,

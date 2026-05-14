@@ -8,13 +8,12 @@ Every downstream component (chunker, indexer, retriever, etc.) consumes Document
 from __future__ import annotations
 
 import hashlib
-import uuid
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field, computed_field, field_validator
+from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
 
 class DocumentFormat(str, Enum):
@@ -46,22 +45,29 @@ class StructuralHint(BaseModel):
     """
 
     kind: str  # "heading" | "page_break" | "list_start" | "table" | ...
-    level: int = 0  # for headings: 1 = H1, 2 = H2, ...
+    level: int = 0
     start_char: int
     end_char: int | None = None
-    text: str | None = None  # for headings, the heading text
+    text: str | None = None
 
 
 class Document(BaseModel):
     """
     A single document ingested into the Pareto pipeline.
 
-    This is the input to chunking and the unit of source-attribution in retrieval.
+    Identity is DETERMINISTIC: the same (source, content) pair always produces
+    the same id. This is what makes re-indexing idempotent — if a document is
+    unchanged, its id is unchanged, and downstream cache layers (vector store,
+    semantic cache, observability traces) all see a stable key.
     """
 
     # ── identity ───────────────────────────────────────────────────────────
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    """Stable unique identifier. Auto-generated UUID4 unless explicitly set."""
+    id: str | None = None
+    """
+    Stable deterministic identifier derived from (source, content).
+    If left as None, it is computed automatically after construction.
+    Callers may also pass an explicit id (e.g. for legacy data).
+    """
 
     # ── content ────────────────────────────────────────────────────────────
     content: str
@@ -79,57 +85,59 @@ class Document(BaseModel):
 
     # ── structure ──────────────────────────────────────────────────────────
     structural_hints: list[StructuralHint] = Field(default_factory=list)
-    """Headings, page breaks, etc. — used by the chunker for tree construction."""
 
     # ── time ───────────────────────────────────────────────────────────────
     created_at: datetime | None = None
-    """When the source document was originally created (if known from metadata)."""
 
     ingested_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    """When Pareto ingested this document."""
 
     # ── extensibility ──────────────────────────────────────────────────────
     extra: dict[str, Any] = Field(default_factory=dict)
-    """
-    Domain-specific or reader-specific metadata.
-    Examples: {"page_count": 14, "language": "en", "legal_jurisdiction": "TR"}
-    """
 
     # ── validators ─────────────────────────────────────────────────────────
     @field_validator("content", mode="before")
     @classmethod
     def _strip_bom_and_normalize(cls, v: str) -> str:
-        """
-        Defensive cleanup applied to every Document's content:
-          * remove leading UTF-8/UTF-16 BOM if present (common on Windows files)
-          * normalize stray carriage returns
-
-        This runs before any other field logic, so all downstream consumers
-        (chunker, indexer, embeddings) see clean text.
-        """
+        """Defensive cleanup: strip UTF-8 BOM and normalize line endings."""
         if not isinstance(v, str) or not v:
             return v
-        # Strip BOMs (UTF-8 EF BB BF decodes to \ufeff)
         v = v.lstrip("\ufeff")
-        # Normalize Windows-style line endings to Unix
         v = v.replace("\r\n", "\n").replace("\r", "\n")
         return v
 
+    @model_validator(mode="after")
+    def _assign_deterministic_id(self) -> "Document":
+        """Derive a stable id from (source, content) if the caller didn't provide one."""
+        if not self.id:
+            self.id = self.compute_id(self.source, self.content)
+        return self
+
+    @staticmethod
+    def compute_id(source: str, content: str) -> str:
+        """
+        Compute a deterministic id from source + content.
+
+        Truncated SHA-256 (first 32 hex chars) — gives 128 bits of entropy,
+        more than enough to avoid collisions in any realistic corpus,
+        while keeping ids short and human-glanceable.
+        """
+        raw = f"{source}\x00{content}".encode("utf-8")
+        return hashlib.sha256(raw).hexdigest()[:32]
+
     # ── computed ───────────────────────────────────────────────────────────
-    @computed_field  # type: ignore[prop-decorator]
+    @computed_field
     @property
     def content_hash(self) -> str:
-        """SHA-256 of the content. Used for change detection and cache invalidation."""
+        """SHA-256 of the content. Used for cache invalidation."""
         return hashlib.sha256(self.content.encode("utf-8")).hexdigest()
 
-    @computed_field  # type: ignore[prop-decorator]
+    @computed_field
     @property
     def length(self) -> int:
-        """Number of characters in the content."""
         return len(self.content)
 
     # ── helpers ────────────────────────────────────────────────────────────
     def short_repr(self) -> str:
-        """One-line summary for logging."""
         title_part = self.title or "(untitled)"
-        return f"Document(id={self.id[:8]}, format={self.format.value}, len={self.length}, title={title_part!r})"
+        id_part = (self.id or "")[:8]
+        return f"Document(id={id_part}, format={self.format.value}, len={self.length}, title={title_part!r})"
