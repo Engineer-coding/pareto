@@ -22,6 +22,8 @@ from pareto.ingestion import load_directory
 
 from pareto.chunking import HierarchicalChunker, render_graphviz, render_rich_tree, chunk_directory, save_report
 from pareto.ingestion import read_file
+from pareto.indexing import Indexer, SentenceTransformerEmbedder
+from pareto.rag import NaiveRAG
 
 
 
@@ -201,6 +203,185 @@ def chunk_corpus(
     saved = save_report(report, out_path)
     console.print()
     console.print(f"[green]Report written:[/green] {saved}")
+
+@app.command()
+def index(
+    corpus: Path = typer.Argument(
+        ..., exists=True, file_okay=False, help="Corpus directory."
+    ),
+    output: Path = typer.Option(
+        Path("benchmarks/results/index"), "--output", "-o",
+        help="Where to save the index.",
+    ),
+    incremental: bool = typer.Option(
+        False, "--incremental",
+        help="If an index already exists at --output, append to it (skip duplicates).",
+    ),
+) -> None:
+    """Ingest, chunk, embed, and persist a corpus as a vector index."""
+    from pareto.chunking import chunk_directory
+
+    console.print(f"[bold]Ingesting + chunking:[/bold] {corpus}")
+    results, report = chunk_directory(corpus)
+    console.print(
+        f"  → [green]{report.num_documents}[/green] docs, "
+        f"[green]{report.total_leaves}[/green] leaves"
+    )
+    if report.failures:
+        console.print(f"  → [yellow]{report.num_failed} failures (use chunk-corpus --show-failures for detail)[/yellow]")
+
+    # Either load existing or build fresh
+    if incremental and (output / "index.faiss").exists():
+        console.print(f"[bold]Loading existing index:[/bold] {output}")
+        indexer = Indexer.load(output)
+        console.print(f"  → existing size: {indexer.store.size}")
+    else:
+        console.print(f"[bold]Building fresh index[/bold] (embedder: e5-multilingual-small)")
+        indexer = Indexer()
+
+    docs = [d for d, _ in results]
+    trees = [t for _, t in results]
+
+    console.print()
+    stats = indexer.index_chunk_trees(trees, documents=docs, show_progress=True)
+    console.print()
+    console.print(
+        f"[bold]Indexed:[/bold] {stats.num_chunks_indexed}  "
+        f"[dim]| skipped: {stats.num_chunks_skipped}  filtered: {stats.num_chunks_filtered}[/dim]"
+    )
+    console.print(f"[bold]Total chars embedded:[/bold] {stats.total_chars_indexed:,}")
+    console.print(f"[bold]Store size:[/bold] {indexer.store.size}")
+    console.print(f"[bold]Format mix:[/bold] {stats.formats}")
+
+    saved = indexer.save(output)
+    console.print(f"\n[green]Saved to:[/green] {saved}")
+
+
+@app.command()
+def search(
+    query: str = typer.Argument(..., help="Natural-language query."),
+    index_dir: Path = typer.Option(
+        Path("benchmarks/results/index"), "--index", "-i",
+        help="Directory of a saved index.",
+    ),
+    k: int = typer.Option(5, "--k", "-k", help="Number of results."),
+    domain: str | None = typer.Option(
+        None, "--domain", "-d",
+        help="Optional: restrict to a corpus subfolder name (legal/finance/health).",
+    ),
+    show_full: bool = typer.Option(
+        False, "--full", help="Show full chunk content (default: truncated preview)."
+    ),
+) -> None:
+    """Semantic search over a previously-built index."""
+    if not index_dir.exists():
+        console.print(f"[red]No index at {index_dir}.[/red] Run `pareto index <corpus>` first.")
+        raise typer.Exit(1)
+
+    console.print(f"[bold]Loading index:[/bold] {index_dir}")
+    indexer = Indexer.load(index_dir)
+    console.print(f"  → {indexer.store.size} chunks, dim {indexer.store.config.embedding_dim}")
+
+    q_vec = indexer.embedder.encode_query(query)
+
+    if domain:
+        # Match the domain via source path (e.g. ...\corpus\legal\foo.pdf)
+        filter_fn = lambda r: f"\\{domain}\\" in r.source or f"/{domain}/" in r.source
+        hits = indexer.store.search(q_vec, k=k, filter_fn=filter_fn)
+    else:
+        hits = indexer.store.search(q_vec, k=k)
+
+    console.print()
+    console.print(f"[bold]Query:[/bold] {query}")
+    if domain:
+        console.print(f"[dim]Filter: domain={domain}[/dim]")
+    console.print(f"[bold]Top {len(hits)} hits:[/bold]\n")
+
+    for i, h in enumerate(hits, 1):
+        src_name = Path(h.record.source).name
+        console.print(f"  [bold cyan]{i}.[/bold cyan] [yellow]score={h.score:.3f}[/yellow]  [dim]{src_name}[/dim]")
+        body = h.record.content if show_full else h.record.content[:200].replace("\n", " ")
+        suffix = "" if show_full or len(h.record.content) <= 200 else "…"
+        console.print(f"     {body}{suffix}\n")
+
+    if not hits:
+        console.print("[yellow]No matches.[/yellow]")
+
+
+@app.command()
+def ask(
+    question: str = typer.Argument(..., help="Question in natural language."),
+    index_dir: Path = typer.Option(
+        Path("benchmarks/results/index"), "--index", "-i",
+        help="Directory of a saved index.",
+    ),
+    top_k: int = typer.Option(4, "--k", "-k", help="Number of chunks to retrieve."),
+    model: str = typer.Option(
+        "ollama/llama3.2:3b", "--model", "-m",
+        help="LiteLLM model identifier.",
+    ),
+    show_context: bool = typer.Option(
+        False, "--show-context", help="Print the retrieved chunks before the answer.",
+    ),
+) -> None:
+    """Ask a natural-language question against a Pareto index."""
+    from pareto.generation import LiteLLMClient, LLMConfig
+    from pareto.indexing import Indexer
+
+    if not index_dir.exists():
+        console.print(
+            f"[red]No index at {index_dir}.[/red] Run `pareto index <corpus>` first."
+        )
+        raise typer.Exit(1)
+
+    console.print(f"[dim]Loading index from {index_dir}...[/dim]")
+    indexer = Indexer.load(index_dir)
+    console.print(f"[dim]  → {indexer.store.size} chunks[/dim]")
+
+    llm = LiteLLMClient(LLMConfig(model=model))
+    rag = NaiveRAG(indexer=indexer, llm=llm, top_k=top_k)
+
+    console.print(f"\n[bold cyan]Q:[/bold cyan] {question}")
+    console.print(f"[dim]Thinking with {model}...[/dim]\n")
+
+    response = rag.query(question)
+
+    # Optional: show what was retrieved
+    if show_context:
+        console.print("[bold]Retrieved context:[/bold]")
+        for i, hit in enumerate(response.retrieved, 1):
+            src = Path(hit.record.source).name
+            preview = hit.record.content[:160].replace("\n", " ")
+            console.print(
+                f"  [cyan]{i}.[/cyan] [yellow]score={hit.score:.3f}[/yellow] [dim]{src}[/dim]"
+            )
+            console.print(f"     {preview}...")
+        console.print()
+
+    # Answer
+    console.print("[bold green]Answer:[/bold green]")
+    console.print(response.answer)
+    console.print()
+
+    # Citations
+    citations = response.citations()
+    if citations:
+        console.print("[bold]Sources:[/bold]")
+        for i, src in enumerate(citations, 1):
+            console.print(f"  [{i}] {Path(src).name}")
+
+    # Stats footer
+    console.print()
+    console.print(
+        f"[dim]Stats: "
+        f"{response.total_tokens} tokens "
+        f"(prompt={response.prompt_tokens}, completion={response.completion_tokens}) | "
+        f"retrieval={response.retrieval_latency_ms}ms | "
+        f"generation={response.generation_latency_ms}ms | "
+        f"total={response.total_latency_ms}ms | "
+        f"cost=${response.cost_usd:.5f}"
+        f"[/dim]"
+    )
 
 
 if __name__ == "__main__":
