@@ -30,6 +30,7 @@ dependencies = [
     "faiss-cpu>=1.8",
     "numpy>=1.26",
     "litellm>=1.40",
+    "pyyaml>=6.0",
 ]
 
 [project.scripts]
