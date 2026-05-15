@@ -1,0 +1,188 @@
+{
+  "system_name": "naive_end_to_end_k5",
+  "test_set_name": "queries",
+  "timestamp": "2026-05-15T10:01:51.262753Z",
+  "num_queries": 5,
+  "k": 5,
+  "avg_hit_at_k": 1.0,
+  "avg_precision_at_k": 0.9199999999999999,
+  "avg_recall_at_k": 1.0,
+  "avg_mrr": 1.0,
+  "avg_retrieval_latency_ms": 56.4,
+  "answer_evaluated": true,
+  "avg_keyword_coverage": 1.0,
+  "avg_prompt_tokens": 763.4,
+  "avg_completion_tokens": 143.6,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 69327.0,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 5.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.9199999999999999,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "mit_license.txt",
+        "mit_license.txt"
+      ],
+      "answer": "[2] (source: gdpr_full_text.html)\n\nThe General Data Protection Regulation (GDPR) is a European Union regulation that came into effect on May 25, 2018. It aims to harmonize data privacy laws across Europe and provide a uniform framework for the protection of personal data within the EU.\n\nAccording to [1] (source: gdpr_full_text.html), GDPR regulates the processing of personal data and sets out rules for its collection, storage, and use. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.\n\nThe GDPR is considered a significant update to existing data protection laws in Europe, providing stronger protections for individuals' personal data and increasing the responsibilities of organizations that collect and process personal data.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 44
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 854,
+        "prompt_tokens": 767,
+        "completion_tokens": 168,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 84962
+      },
+      "total_latency_ms": 85007
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) came into effect on May 25th, 2018. [1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 41
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 85,
+        "prompt_tokens": 766,
+        "completion_tokens": 26,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 42986
+      },
+      "total_latency_ms": 43028
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 5 of the General Data Protection Regulation (GDPR), the key data processing principles are:\n\n1. Lawfulness, fairness and transparency (Article 5(1)(a))\n2. Purpose limitation (Article 5(1)(c))\n3. Data minimization (Article 5(1)(d))\n4. Accuracy (Article 5(1)(f))\n5. Storage limitation (Article 5(1)(e))\n\nThese principles aim to ensure that personal data is processed in a way that respects the rights and freedoms of individuals, while also promoting transparency and accountability in data processing activities.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 60
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 532,
+        "prompt_tokens": 762,
+        "completion_tokens": 125,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 64320
+      },
+      "total_latency_ms": 64380
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 15 of the General Data Protection Regulation (GDPR), data subjects have the right to access their personal data and request rectification or erasure of that data. Additionally, data subjects have the right to restriction of processing, notification obligation regarding rectification or erasure of personal data or restriction of processing, right to data portability, right to object to processing for direct marketing purposes or profiling, and the right to object to automated individual decision-making.\n\n[1], [2]\n\nThese rights are outlined in Section 3 of Article 15, which states that data subjects have the following rights:\n\n* Right to access their personal data\n* Right to rectification of inaccurate personal data\n* Right to erasure of personal data (‘right to be forgotten’)\n* Right to restriction of processing\n* Right to notification obligation regarding rectification or erasure of personal data or restriction of processing\n* Right to data portability\n* Right to object to processing for direct marketing purposes or profiling\n* Right to object to automated individual decision-making\n\n[3], [4]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 96
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 1130,
+        "prompt_tokens": 774,
+        "completion_tokens": 219,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 81326
+      },
+      "total_latency_ms": 81422
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 37 of the GDPR, the Data Protection Officer (DPO) is responsible for [1]. The DPO's tasks include monitoring compliance with this Regulation and other applicable laws, as well as providing guidance on data protection matters. Additionally, the DPO must be designated by the controller or processor and have the necessary expertise to carry out their duties.\n\nThe DPO's position is also defined in Article 38, which states that the DPO must be independent of the controller or processor and not subject to any instructions that might compromise their independence. Furthermore, Article 39 outlines the specific tasks of the DPO, including monitoring compliance with data protection laws, providing guidance on data protection matters, and reporting any breaches to the supervisory authority.\n\nIt's worth noting that the role of the DPO is an important one in ensuring compliance with the GDPR and protecting individuals' personal data.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 41
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 955,
+        "prompt_tokens": 748,
+        "completion_tokens": 180,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 73041
+      },
+      "total_latency_ms": 73083
+    }
+  ],
+  "extra": {
+    "refusal_accuracy": 0.0
+  }
+}

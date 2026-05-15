@@ -207,9 +207,9 @@ out/
 Thumbs.db
 desktop.ini
 
-# Pareto build artifacts
-benchmarks/results/*.json
-!benchmarks/results/.gitkeep
+# Pareto build artifacts — ignore only the vector index binary;
+# benchmark report JSONs are versioned as historical baselines.
+benchmarks/results/index/
 
 # Local data — large corpus files won't be committed
 benchmarks/corpus/**/*.pdf
