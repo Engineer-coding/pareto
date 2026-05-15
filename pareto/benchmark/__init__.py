@@ -16,6 +16,7 @@ from pareto.benchmark.models import (
     QueryType,
     RetrievalMetrics,
 )
+from pareto.benchmark.runner import BenchmarkRunner, load_report, save_report
 from pareto.benchmark.test_set import TestSet
 
 __all__ = [
@@ -27,9 +28,12 @@ __all__ = [
     "RetrievalMetrics",
     "AnswerMetrics",
     "TestSet",
+    "BenchmarkRunner",
     "compute_retrieval_metrics",
     "compute_answer_metrics",
     "aggregate_retrieval",
     "aggregate_answer",
     "aggregate_by_domain",
+    "save_report",
+    "load_report",
 ]
