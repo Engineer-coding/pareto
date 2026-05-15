@@ -25,6 +25,13 @@ from pareto.ingestion import read_file
 from pareto.indexing import Indexer, SentenceTransformerEmbedder
 from pareto.rag import NaiveRAG
 
+from pareto.benchmark import (
+    BenchmarkRunner,
+    TestSet,
+    save_report,
+)
+
+
 
 
 app = typer.Typer(
@@ -382,6 +389,150 @@ def ask(
         f"cost=${response.cost_usd:.5f}"
         f"[/dim]"
     )
+
+@app.command()
+def benchmark(
+    test_set_path: Path = typer.Option(
+        Path("benchmarks/queries/queries.yaml"),
+        "--test-set", "-t",
+        help="Path to the YAML test set.",
+    ),
+    index_dir: Path = typer.Option(
+        Path("benchmarks/results/index"), "--index", "-i",
+        help="Directory of a saved index.",
+    ),
+    mode: str = typer.Option(
+        "retrieval", "--mode", "-M",
+        help="Benchmark mode: 'retrieval' (fast) or 'end_to_end' (slow, runs LLM).",
+    ),
+    k: int = typer.Option(5, "--k", "-k", help="Retrieval depth."),
+    limit: int | None = typer.Option(
+        None, "--limit", "-n",
+        help="Run only the first N queries (useful for end-to-end smoke tests).",
+    ),
+    output: Path | None = typer.Option(
+        None, "--output", "-o",
+        help="Where to save the JSON report. Default name based on mode/k.",
+    ),
+    system_name: str | None = typer.Option(
+        None, "--name",
+        help="System identifier in the report. Default: 'naive_<mode>_k<k>'.",
+    ),
+    model: str = typer.Option(
+        "ollama/llama3.2:3b", "--model",
+        help="LLM model (end_to_end mode only).",
+    ),
+) -> None:
+    """Run a benchmark of a Pareto system against the test set."""
+    if not index_dir.exists():
+        console.print(f"[red]No index at {index_dir}.[/red] Run `pareto index <corpus>` first.")
+        raise typer.Exit(1)
+    if mode not in ("retrieval", "end_to_end"):
+        console.print(f"[red]Unknown mode: {mode}.[/red] Use 'retrieval' or 'end_to_end'.")
+        raise typer.Exit(2)
+
+    # Load components
+    console.print(f"[dim]Loading index from {index_dir}...[/dim]")
+    from pareto.generation import LiteLLMClient, LLMConfig
+    from pareto.indexing import Indexer
+    indexer = Indexer.load(index_dir)
+    test_set = TestSet.from_yaml(test_set_path)
+    console.print(
+        f"[dim]  → {indexer.store.size} chunks, {len(test_set)} queries[/dim]"
+    )
+
+    # Runner setup
+    rag = None
+    if mode == "end_to_end":
+        rag = NaiveRAG(
+            indexer=indexer,
+            llm=LiteLLMClient(LLMConfig(model=model)),
+            top_k=k,
+        )
+        if limit is None:
+            console.print(
+                "[yellow]Warning:[/yellow] end-to-end mode without --limit will run "
+                f"all {len(test_set)} queries through the LLM. This can take 15-30 minutes on CPU."
+            )
+    runner = BenchmarkRunner(indexer=indexer, rag=rag)
+
+    name = system_name or f"naive_{mode}_k{k}"
+    console.print(f"\n[bold]Running benchmark:[/bold] {name} (mode={mode}, k={k})\n")
+
+    if mode == "retrieval":
+        report = runner.run_retrieval(test_set, k=k, system_name=name, limit=limit)
+    else:
+        report = runner.run_end_to_end(test_set, k=k, system_name=name, limit=limit)
+
+    # ── pretty-print summary ─────────────────────────────────────────────
+    console.print()
+    console.print(f"[bold cyan]System:[/bold cyan] {report.system_name}")
+    console.print(
+        f"[bold cyan]Test set:[/bold cyan] {report.test_set_name}  "
+        f"N={report.num_queries}  k={report.k}"
+    )
+
+    table = Table(title="Retrieval Metrics", show_header=True)
+    table.add_column("Metric")
+    table.add_column("Value", justify="right")
+    table.add_row("hit@k", f"{report.avg_hit_at_k:.2%}")
+    table.add_row("precision@k", f"{report.avg_precision_at_k:.3f}")
+    table.add_row("recall@k", f"{report.avg_recall_at_k:.3f}")
+    table.add_row("MRR", f"{report.avg_mrr:.3f}")
+    table.add_row("avg latency (ms)", f"{report.avg_retrieval_latency_ms:.1f}")
+    console.print(table)
+
+    # Per-domain
+    dt = Table(title="By Domain", show_header=True)
+    dt.add_column("Domain")
+    dt.add_column("N", justify="right")
+    dt.add_column("hit@k", justify="right")
+    dt.add_column("P@k", justify="right")
+    dt.add_column("R@k", justify="right")
+    dt.add_column("MRR", justify="right")
+    for domain, m in report.by_domain.items():
+        dt.add_row(
+            domain,
+            str(int(m["n"])),
+            f"{m['hit_at_k']:.2%}",
+            f"{m['precision_at_k']:.3f}",
+            f"{m['recall_at_k']:.3f}",
+            f"{m['mrr']:.3f}",
+        )
+    console.print(dt)
+
+    # Answer metrics if end-to-end
+    if report.answer_evaluated:
+        at = Table(title="Answer Metrics", show_header=True)
+        at.add_column("Metric")
+        at.add_column("Value", justify="right")
+        at.add_row("keyword coverage", f"{report.avg_keyword_coverage:.3f}")
+        at.add_row("refusal accuracy (NO_ANSWER)", f"{report.extra.get('refusal_accuracy', 0.0):.2%}")
+        at.add_row("avg prompt tokens", f"{report.avg_prompt_tokens:.0f}")
+        at.add_row("avg completion tokens", f"{report.avg_completion_tokens:.0f}")
+        at.add_row("avg generation latency (ms)", f"{report.avg_generation_latency_ms:.0f}")
+        at.add_row("avg cost / query (USD)", f"${report.avg_cost_usd:.5f}")
+        at.add_row("total cost (USD)", f"${report.total_cost_usd:.5f}")
+        console.print(at)
+
+    # Misses
+    misses = [
+        r for r in report.results
+        if r.type.value != "no_answer" and not r.retrieval.hit_at_k
+    ]
+    if misses:
+        console.print(f"\n[yellow]Retrieval misses ({len(misses)}):[/yellow]")
+        for r in misses[:5]:
+            console.print(f"  ✗ [{r.query_id}] {r.query}")
+            console.print(f"    [dim]retrieved: {r.retrieved_sources}[/dim]")
+        if len(misses) > 5:
+            console.print(f"  ... and {len(misses) - 5} more")
+
+    # Save
+    if output is None:
+        output = Path(f"benchmarks/results/{name}.json")
+    saved = save_report(report, output)
+    console.print(f"\n[green]Report saved:[/green] {saved}")
 
 
 if __name__ == "__main__":
