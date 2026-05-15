@@ -1,0 +1,263 @@
+# Pareto benchmark test set — Week 1 baseline.
+# Ground truth is source-based (filename substrings) + keyword-based (lowercase
+# substring match in the generated answer).
+
+# ══════════════════════════════════════════════════════════════════════
+# LEGAL
+# ══════════════════════════════════════════════════════════════════════
+
+- id: legal-001
+  query: "What is GDPR?"
+  domain: legal
+  difficulty: easy
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: [general data protection regulation, european union]
+
+- id: legal-002
+  query: "When did GDPR come into effect?"
+  domain: legal
+  difficulty: easy
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: ["2018"]
+
+- id: legal-003
+  query: "What are the key data processing principles in GDPR?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: [lawfulness, transparency, purpose]
+  notes: "Article 5 principles."
+
+- id: legal-004
+  query: "What rights do data subjects have under GDPR?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: [right, access, rectification]
+
+- id: legal-005
+  query: "What is the role of a Data Protection Officer?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: [data protection officer]
+
+- id: legal-006
+  query: "Does GDPR apply to companies outside the European Union?"
+  domain: legal
+  difficulty: hard
+  type: factual
+  expected_sources: [gdpr_full_text]
+  expected_keywords: [eu, residents]
+  notes: "Territorial scope question."
+
+- id: legal-007
+  query: "What permissions does the Apache 2.0 license grant?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [apache_2_license]
+  expected_keywords: [reproduce, modify, distribute]
+
+- id: legal-008
+  query: "What are the redistribution conditions under Apache 2.0?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [apache_2_license]
+  expected_keywords: [copyright, notice, license]
+
+- id: legal-009
+  query: "What does the synthetic contract say about obligations?"
+  domain: legal
+  difficulty: easy
+  type: factual
+  expected_sources: [synthetic_contract]
+  expected_keywords: [obligation, party, perform]
+
+- id: legal-010
+  query: "What is the fine amount in the Acme Corp 2023 data breach ruling?"
+  domain: legal
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Corpus has no such record. System should say it cannot answer."
+
+# ══════════════════════════════════════════════════════════════════════
+# FINANCE
+# ══════════════════════════════════════════════════════════════════════
+
+- id: finance-001
+  query: "What is Basel III?"
+  domain: finance
+  difficulty: easy
+  type: factual
+  expected_sources: [basel3_summary]
+  expected_keywords: [basel committee, banking, regulation]
+
+- id: finance-002
+  query: "When were the Basel III reforms endorsed?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [basel3_summary]
+  expected_keywords: ["2017"]
+
+- id: finance-003
+  query: "What is the Liquidity Coverage Ratio in Basel III?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [basel3_summary]
+  expected_keywords: [liquidity, coverage]
+
+- id: finance-004
+  query: "What is the Net Stable Funding Ratio?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [basel3_summary]
+  expected_keywords: [stable, funding]
+
+- id: finance-005
+  query: "Summarize the main goals of Basel III reforms"
+  domain: finance
+  difficulty: medium
+  type: summary
+  expected_sources: [basel3_summary]
+  expected_keywords: [crisis, capital, risk]
+
+- id: finance-006
+  query: "What was the Q4 revenue growth in the earnings report?"
+  domain: finance
+  difficulty: easy
+  type: factual
+  expected_sources: [synthetic_earnings]
+  expected_keywords: ["18", "percent"]
+
+- id: finance-007
+  query: "How did cloud services perform in the Q4 earnings report?"
+  domain: finance
+  difficulty: easy
+  type: factual
+  expected_sources: [synthetic_earnings]
+  expected_keywords: [cloud, "28", billion]
+
+- id: finance-008
+  query: "Why did hardware sales decline?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [synthetic_earnings]
+  expected_keywords: [supply, constraints]
+
+- id: finance-009
+  query: "What is the current Bank of America stock price today?"
+  domain: finance
+  difficulty: easy
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Real-time price not in corpus."
+
+- id: finance-010
+  query: "What is the projected revenue for 2026 according to Acme's forecast?"
+  domain: finance
+  difficulty: medium
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Not in corpus."
+
+# ══════════════════════════════════════════════════════════════════════
+# HEALTH
+# ══════════════════════════════════════════════════════════════════════
+
+- id: health-001
+  query: "What is considered high blood pressure?"
+  domain: health
+  difficulty: easy
+  type: factual
+  expected_sources: [cdc_hypertension]
+  expected_keywords: ["130", "80"]
+  notes: "Numeric threshold."
+
+- id: health-002
+  query: "What are the symptoms of high blood pressure?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [cdc_hypertension]
+  expected_keywords: ["no", symptoms]
+  notes: "Trick: there are usually no symptoms. Hallucination check."
+
+- id: health-003
+  query: "What organs can high blood pressure damage?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [cdc_hypertension]
+  expected_keywords: [heart, brain, kidney]
+
+- id: health-004
+  query: "How is blood pressure measured?"
+  domain: health
+  difficulty: easy
+  type: factual
+  expected_sources: [cdc_hypertension]
+  expected_keywords: [measure]
+
+- id: health-005
+  query: "What is diabetes?"
+  domain: health
+  difficulty: easy
+  type: factual
+  expected_sources: [who_diabetes]
+  expected_keywords: [blood, glucose]
+
+- id: health-006
+  query: "What are the main types of diabetes?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [who_diabetes]
+  expected_keywords: [type, "1", "2"]
+
+- id: health-007
+  query: "What complications can diabetes cause?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [who_diabetes]
+  expected_keywords: [heart, kidney]
+
+- id: health-008
+  query: "How many participants were in the clinical study?"
+  domain: health
+  difficulty: easy
+  type: factual
+  expected_sources: [synthetic_study]
+  expected_keywords: ["1200", participants]
+
+- id: health-009
+  query: "What study design was used in the clinical study?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [synthetic_study]
+  expected_keywords: [randomized, placebo]
+
+- id: health-010
+  query: "What is the discovered cure for type 1 diabetes from 2025?"
+  domain: health
+  difficulty: medium
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "No such cure exists. Hallucination check."
