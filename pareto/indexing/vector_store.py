@@ -89,6 +89,17 @@ class VectorStore:
     def config(self) -> VectorStoreConfig:
         return self._config
 
+    @property
+    def records(self) -> list[VectorRecord]:
+        """Read-only view of the parallel records array.
+
+        Returns the live underlying list — DO NOT MUTATE. Provided as a
+        public alternative to the private `_records` for downstream
+        consumers (HybridRetriever, BM25Ranker, benchmarks) that need
+        positional doc_id alignment with vector indices.
+        """
+        return self._records
+
     def __len__(self) -> int:
         return self.size
 
