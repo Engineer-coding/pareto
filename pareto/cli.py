@@ -534,6 +534,31 @@ def benchmark(
     saved = save_report(report, output)
     console.print(f"\n[green]Report saved:[/green] {saved}")
 
+@app.command()
+def serve(
+    index_dir: Path = typer.Option(
+        Path("benchmarks/results/index"), "--index", "-i",
+        help="Directory of a saved index.",
+    ),
+    host: str = typer.Option("127.0.0.1", "--host", help="Bind host."),
+    port: int = typer.Option(8000, "--port", "-p", help="Bind port."),
+) -> None:
+    """Start the Pareto HTTP API server."""
+    import uvicorn
+
+    from pareto.api.server import create_app
+
+    if not index_dir.exists():
+        console.print(
+            f"[red]No index at {index_dir}.[/red] Run `pareto index <corpus>` first."
+        )
+        raise typer.Exit(1)
+
+    api_app = create_app(index_dir=index_dir)
+    console.print(f"[green]Pareto API:[/green] http://{host}:{port}")
+    console.print("[dim]Press Ctrl+C to stop.[/dim]")
+    uvicorn.run(api_app, host=host, port=port, log_level="info")
+
 
 if __name__ == "__main__":
     app()

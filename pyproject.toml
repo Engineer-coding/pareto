@@ -31,6 +31,8 @@ dependencies = [
     "numpy>=1.26",
     "litellm>=1.40",
     "pyyaml>=6.0",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
 ]
 
 [project.scripts]
