@@ -48,9 +48,19 @@ from pareto.rag.naive_rag import NaiveRAG
 class BenchmarkRunner:
     """Runs a TestSet against an Indexer (retrieval) or NaiveRAG (end-to-end)."""
 
-    def __init__(self, indexer: Indexer, rag: NaiveRAG | None = None):
+    def __init__(
+        self,
+        indexer: Indexer,
+        rag: NaiveRAG | None = None,
+        retriever=None,  # any object with `search(query, k) -> list[Hit]`
+    ):
         self.indexer = indexer
         self.rag = rag
+        # Default retriever: DenseRetriever wrapping the indexer
+        if retriever is None:
+            from pareto.retrieval.dense import DenseRetriever
+            retriever = DenseRetriever(indexer)
+        self.retriever = retriever
 
     # ── retrieval-only mode ───────────────────────────────────────────────
     def run_retrieval(
@@ -148,10 +158,9 @@ class BenchmarkRunner:
             )
             answer = rag_response.answer
         else:
-            # Retrieval-only path
+            # Retrieval-only path — uses injected retriever (Dense/BM25/Hybrid/...)
             t_retr = time.perf_counter()
-            q_vec = self.indexer.embedder.encode_query(query.query)
-            hits = self.indexer.store.search(q_vec, k=k)
+            hits = self.retriever.search(query.query, k=k)
             retrieval_latency_ms = int((time.perf_counter() - t_retr) * 1000)
 
             retrieved_sources = [Path(h.record.source).name for h in hits]

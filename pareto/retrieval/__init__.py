@@ -5,6 +5,7 @@ from pareto.retrieval.hybrid import HybridHit, HybridRetriever
 from pareto.retrieval.inverted_index import InvertedIndex
 from pareto.retrieval.rrf import reciprocal_rank_fusion
 from pareto.retrieval.tokenizer import tokenize, STOPWORDS, STOPWORDS_EN, STOPWORDS_TR
+from pareto.retrieval.dense import DenseRetriever
 
 __all__ = [
     "tokenize",
@@ -18,4 +19,5 @@ __all__ = [
     "reciprocal_rank_fusion",
     "HybridHit",
     "HybridRetriever",
+    "DenseRetriever",
 ]
