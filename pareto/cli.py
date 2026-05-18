@@ -339,6 +339,9 @@ def ask(
     """Ask a natural-language question against a Pareto index."""
     from pareto.generation import LiteLLMClient, LLMConfig
     from pareto.indexing import Indexer
+    from pareto.observability import QueryLogStore
+    
+    log_store = QueryLogStore()
 
     if not index_dir.exists():
         console.print(
@@ -369,7 +372,7 @@ def ask(
         raise typer.Exit(1)
 
     llm = LiteLLMClient(LLMConfig(model=model))
-    rag = NaiveRAG(retriever=retriever_obj, llm=llm, top_k=top_k)
+    rag = NaiveRAG(retriever=retriever_obj, llm=llm, top_k=top_k, log_store=log_store)
 
     console.print(f"\n[bold cyan]Q:[/bold cyan] {question}")
     console.print(f"[dim]Thinking with {model}...[/dim]\n")
@@ -623,6 +626,232 @@ def serve(
     console.print(f"[green]Pareto API:[/green] http://{host}:{port}")
     console.print("[dim]Press Ctrl+C to stop.[/dim]")
     uvicorn.run(api_app, host=host, port=port, log_level="info")
+
+
+@app.command()
+def stats(
+    db_path: Path = typer.Option(
+        Path("benchmarks/results/pareto.db"), "--db",
+        help="Path to the Pareto query log database.",
+    ),
+    last: int | None = typer.Option(
+        None, "--last", "-n",
+        help="Show the last N queries in a detail table.",
+    ),
+    since: str | None = typer.Option(
+        None, "--since", "-s",
+        help="Filter to queries since a duration: '30m', '24h', '7d', '2w'.",
+    ),
+    by: str | None = typer.Option(
+        None, "--by",
+        help="Group aggregate by: 'model' or 'retriever'.",
+    ),
+    slow: int | None = typer.Option(
+        None, "--slow",
+        help="Show queries slower than this many milliseconds (default 30000 if flag given).",
+    ),
+    show_questions: bool = typer.Option(
+        False, "--show-questions",
+        help="Include the question text column in detail tables.",
+    ),
+) -> None:
+    """Show query statistics from the Pareto log database."""
+    from datetime import datetime, timedelta, timezone
+
+    from pareto.observability import QueryLogConfig, QueryLogStore
+
+    if not db_path.exists():
+        console.print(
+            f"[yellow]No query log found at {db_path}.[/yellow]\n"
+            f"[dim]Run a few `pareto ask` queries first to populate it.[/dim]"
+        )
+        raise typer.Exit(1)
+
+    store = QueryLogStore(QueryLogConfig(db_path=db_path))
+
+    # Parse --since
+    since_dt: datetime | None = None
+    if since:
+        try:
+            since_dt = datetime.now(timezone.utc) - _parse_duration(since)
+        except ValueError as e:
+            console.print(f"[red]{e}[/red]")
+            raise typer.Exit(2)
+
+    # Flag priority: slow > by > last > overall
+    if slow is not None:
+        _stats_show_slow(store, threshold_ms=slow if slow > 0 else 30000)
+        return
+
+    if by is not None:
+        _stats_show_grouped(store, group_by=by, since_dt=since_dt)
+        return
+
+    if last is not None:
+        _stats_show_recent(store, n=last, show_questions=show_questions)
+        return
+
+    # Default: overall summary + last 10
+    _stats_show_overall(store, since_dt=since_dt)
+    console.print()
+    _stats_show_recent(store, n=10, show_questions=show_questions)
+
+
+# ── stats helpers ────────────────────────────────────────────────────────
+
+def _parse_duration(s: str):
+    """Parse '30m', '24h', '7d', '2w' into a timedelta."""
+    from datetime import timedelta
+    s = s.lower().strip()
+    if not s:
+        raise ValueError("Empty duration.")
+    unit = s[-1]
+    try:
+        n = int(s[:-1])
+    except ValueError as e:
+        raise ValueError(f"Bad duration {s!r}. Use '30m', '24h', '7d', or '2w'.") from e
+    if unit == "m":
+        return timedelta(minutes=n)
+    if unit == "h":
+        return timedelta(hours=n)
+    if unit == "d":
+        return timedelta(days=n)
+    if unit == "w":
+        return timedelta(weeks=n)
+    raise ValueError(f"Unknown duration unit in {s!r}. Use m/h/d/w.")
+
+
+def _stats_show_overall(store, since_dt) -> None:
+    agg = store.aggregate(since=since_dt)
+    overall = agg.get("overall", {}) if agg else {}
+    if not overall or (overall.get("count") or 0) == 0:
+        window = f"since {since_dt.isoformat()}" if since_dt else "all time"
+        console.print(f"[dim]No queries logged ({window}).[/dim]")
+        return
+
+    title = "Overall stats"
+    if since_dt:
+        title += f" (since {since_dt.strftime('%Y-%m-%d %H:%M')} UTC)"
+
+    table = Table(title=title)
+    table.add_column("Metric")
+    table.add_column("Value", justify="right")
+    table.add_row("Total queries", f"{overall['count']:,}")
+    table.add_row("Total tokens", f"{(overall.get('total_tokens') or 0):,}")
+    table.add_row("Total cost (USD)", f"${(overall.get('total_cost_usd') or 0):.5f}")
+    table.add_row("Avg cost / query", f"${(overall.get('avg_cost_usd') or 0):.5f}")
+    table.add_row("Avg retrieval latency", f"{(overall.get('avg_retrieval_latency_ms') or 0):.0f} ms")
+    table.add_row("Avg generation latency", f"{(overall.get('avg_generation_latency_ms') or 0):.0f} ms")
+    table.add_row("Avg total latency", f"{(overall.get('avg_total_latency_ms') or 0):.0f} ms")
+    table.add_row("Max total latency", f"{(overall.get('max_total_latency_ms') or 0):,} ms")
+    console.print(table)
+
+
+def _stats_show_grouped(store, group_by: str, since_dt) -> None:
+    if group_by not in ("model", "retriever"):
+        console.print(f"[red]--by must be 'model' or 'retriever', got {group_by!r}[/red]")
+        raise typer.Exit(2)
+
+    agg = store.aggregate(since=since_dt, group_by=group_by)
+    if not agg:
+        console.print("[dim]No queries to aggregate.[/dim]")
+        return
+
+    title = f"Stats by {group_by}"
+    if since_dt:
+        title += f" (since {since_dt.strftime('%Y-%m-%d %H:%M')} UTC)"
+
+    table = Table(title=title)
+    table.add_column(group_by.capitalize())
+    table.add_column("count", justify="right")
+    table.add_column("total tokens", justify="right")
+    table.add_column("total cost", justify="right")
+    table.add_column("avg retr ms", justify="right")
+    table.add_column("avg gen ms", justify="right")
+    table.add_column("avg total ms", justify="right")
+
+    sorted_groups = sorted(agg.items(), key=lambda kv: -(kv[1].get("count") or 0))
+    for group_name, stats in sorted_groups:
+        table.add_row(
+            str(group_name),
+            f"{stats['count']:,}",
+            f"{(stats.get('total_tokens') or 0):,}",
+            f"${(stats.get('total_cost_usd') or 0):.5f}",
+            f"{(stats.get('avg_retrieval_latency_ms') or 0):.0f}",
+            f"{(stats.get('avg_generation_latency_ms') or 0):.0f}",
+            f"{(stats.get('avg_total_latency_ms') or 0):.0f}",
+        )
+    console.print(table)
+
+
+def _stats_show_recent(store, n: int, show_questions: bool) -> None:
+    rows = store.last_n(n)
+    if not rows:
+        console.print("[dim]No queries logged.[/dim]")
+        return
+
+    table = Table(title=f"Last {len(rows)} queries")
+    table.add_column("id", justify="right")
+    table.add_column("timestamp")
+    table.add_column("retriever")
+    table.add_column("model")
+    if show_questions:
+        table.add_column("question")
+    table.add_column("tokens", justify="right")
+    table.add_column("cost", justify="right")
+    table.add_column("total ms", justify="right")
+
+    for r in rows:
+        ts_short = (r["timestamp"] or "")[:16].replace("T", " ")
+        row_items = [
+            str(r["id"]),
+            ts_short,
+            r["retriever"] or "—",
+            (r["model"] or "—").replace("ollama/", ""),
+        ]
+        if show_questions:
+            q = (r["question"] or "")[:55]
+            if len(r["question"] or "") > 55:
+                q += "..."
+            row_items.append(q)
+        row_items.extend([
+            f"{(r['total_tokens'] or 0):,}",
+            f"${(r['cost_usd'] or 0):.5f}",
+            f"{(r['total_latency_ms'] or 0):,}",
+        ])
+        table.add_row(*row_items)
+    console.print(table)
+
+
+def _stats_show_slow(store, threshold_ms: int) -> None:
+    rows = store.slow_queries(threshold_ms=threshold_ms, limit=20)
+    if not rows:
+        console.print(f"[dim]No queries above {threshold_ms} ms.[/dim]")
+        return
+
+    table = Table(title=f"Slow queries (≥ {threshold_ms:,} ms)")
+    table.add_column("id", justify="right")
+    table.add_column("question")
+    table.add_column("retriever")
+    table.add_column("model")
+    table.add_column("retr ms", justify="right")
+    table.add_column("gen ms", justify="right")
+    table.add_column("total ms", justify="right", style="red")
+
+    for r in rows:
+        q = (r["question"] or "")[:55]
+        if len(r["question"] or "") > 55:
+            q += "..."
+        table.add_row(
+            str(r["id"]),
+            q,
+            r["retriever"] or "—",
+            (r["model"] or "—").replace("ollama/", ""),
+            f"{(r['retrieval_latency_ms'] or 0):,}",
+            f"{(r['generation_latency_ms'] or 0):,}",
+            f"{(r['total_latency_ms'] or 0):,}",
+        )
+    console.print(table)
 
 
 if __name__ == "__main__":
