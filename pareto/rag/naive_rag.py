@@ -45,6 +45,7 @@ class NaiveRAG:
         system_prompt: str = DEFAULT_RAG_SYSTEM_PROMPT,
         user_template: str = DEFAULT_RAG_USER_TEMPLATE,
         max_context_chars: int = 6000,
+        log_store=None,
     ):
         """
         Args:
@@ -82,6 +83,7 @@ class NaiveRAG:
         self.system_prompt = system_prompt
         self.user_template = user_template
         self.max_context_chars = max_context_chars
+        self.log_store = log_store
 
     # ── public API ────────────────────────────────────────────────────────
     def query(self, question: str, top_k: int | None = None) -> RAGResponse:
@@ -110,7 +112,8 @@ class NaiveRAG:
 
         total_latency_ms = int((time.perf_counter() - t0) * 1000)
 
-        return RAGResponse(
+
+        response = RAGResponse(
             question=question,
             answer=llm_resp.text,
             retrieved=hits,
@@ -123,6 +126,23 @@ class NaiveRAG:
             generation_latency_ms=generation_latency_ms,
             total_latency_ms=total_latency_ms,
         )
+
+        # Best-effort logging. Failures never break the query.
+        if self.log_store is not None:
+            try:
+                self.log_store.log(
+                    response,
+                    retriever=type(self.retriever).__name__,
+                    top_k=k,
+                )
+            except Exception as e:  # noqa: BLE001
+                import sys
+                print(
+                    f"[pareto-rag] log_store.log() failed: {e}",
+                    file=sys.stderr,
+                )
+
+        return response
 
     # ── helpers ───────────────────────────────────────────────────────────
     def _build_context(self, hits: list) -> str:

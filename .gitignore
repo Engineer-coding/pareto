@@ -210,6 +210,10 @@ desktop.ini
 # Pareto build artifacts — ignore only the vector index binary;
 # benchmark report JSONs are versioned as historical baselines.
 benchmarks/results/index/
+benchmarks/results/pareto.db
+benchmarks/results/pareto.db-journal
+benchmarks/results/pareto.db-wal
+benchmarks/results/pareto.db-shm
 
 # Local data — large corpus files won't be committed
 benchmarks/corpus/**/*.pdf
