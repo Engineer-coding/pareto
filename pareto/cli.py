@@ -445,6 +445,12 @@ def benchmark(
         "ollama/llama3.2:3b", "--model",
         help="LLM model (end_to_end mode only).",
     ),
+
+    retriever: str = typer.Option(
+        "hybrid",
+        "--retriever", "-r",
+        help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
+    ),
 ) -> None:
     """Run a benchmark of a Pareto system against the test set."""
     if not index_dir.exists():
@@ -464,11 +470,47 @@ def benchmark(
         f"[dim]  → {indexer.store.size} chunks, {len(test_set)} queries[/dim]"
     )
 
+   # Build the requested retriever
+    if retriever == "dense":
+        from pareto.retrieval import DenseRetriever
+        retriever_obj = DenseRetriever(indexer)
+    elif retriever == "bm25":
+        from pareto.retrieval import BM25Ranker
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = ranker
+    elif retriever == "hybrid":
+        from pareto.retrieval import BM25Ranker, HybridRetriever
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
+    else:
+        console.print(f"[red]Unknown retriever:[/red] {retriever}")
+        raise typer.Exit(1)
+
+    # Build the requested retriever
+    if retriever == "dense":
+        from pareto.retrieval import DenseRetriever
+        retriever_obj = DenseRetriever(indexer)
+    elif retriever == "bm25":
+        from pareto.retrieval import BM25Ranker
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = ranker
+    elif retriever == "hybrid":
+        from pareto.retrieval import BM25Ranker, HybridRetriever
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
+    else:
+        console.print(f"[red]Unknown retriever:[/red] {retriever}")
+        raise typer.Exit(1)
+
     # Runner setup
     rag = None
     if mode == "end_to_end":
         rag = NaiveRAG(
-            indexer=indexer,
+            retriever=retriever_obj,
             llm=LiteLLMClient(LLMConfig(model=model)),
             top_k=k,
         )
@@ -477,10 +519,10 @@ def benchmark(
                 "[yellow]Warning:[/yellow] end-to-end mode without --limit will run "
                 f"all {len(test_set)} queries through the LLM. This can take 15-30 minutes on CPU."
             )
-    runner = BenchmarkRunner(indexer=indexer, rag=rag)
+    runner = BenchmarkRunner(indexer=indexer, rag=rag, retriever=retriever_obj)
 
     name = system_name or f"naive_{mode}_k{k}"
-    console.print(f"\n[bold]Running benchmark:[/bold] {name} (mode={mode}, k={k})\n")
+    console.print(f"\n[bold]Running benchmark:[/bold] {name} (mode={mode}, retriever={retriever}, k={k})\n")
 
     if mode == "retrieval":
         report = runner.run_retrieval(test_set, k=k, system_name=name, limit=limit)

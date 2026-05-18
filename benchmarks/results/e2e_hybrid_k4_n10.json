@@ -1,0 +1,333 @@
+{
+  "system_name": "e2e_hybrid_k4_n10",
+  "test_set_name": "queries",
+  "timestamp": "2026-05-18T09:18:11.994039Z",
+  "num_queries": 10,
+  "k": 4,
+  "avg_hit_at_k": 1.0,
+  "avg_precision_at_k": 0.8888888888888888,
+  "avg_recall_at_k": 1.0,
+  "avg_mrr": 1.0,
+  "avg_retrieval_latency_ms": 34.55555555555556,
+  "answer_evaluated": true,
+  "avg_keyword_coverage": 0.9074074074074073,
+  "avg_prompt_tokens": 600.8,
+  "avg_completion_tokens": 107.2,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 52134.6,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 9.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.8888888888888888,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 41
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 52784
+      },
+      "total_latency_ms": 52825
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "basel3_summary.html",
+        "who_diabetes.html"
+      ],
+      "answer": "According to Article 99 of the General Data Protection Regulation (GDPR), the Regulation came into force on May 25th, 2018. [1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 18
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 127,
+        "prompt_tokens": 660,
+        "completion_tokens": 34,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 30244
+      },
+      "total_latency_ms": 30263
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 5 of the General Data Protection Regulation (GDPR), the key data processing principles are:\n\n1. Lawfulness, fairness and transparency;\n2. Data minimization;\n3. Accuracy; \n4. Storage limitation;\n5. Integrity and confidentiality.\n\nThese principles aim to ensure that personal data is processed in a way that respects the rights of individuals and maintains their trust.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 22
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 388,
+        "prompt_tokens": 625,
+        "completion_tokens": 78,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 45732
+      },
+      "total_latency_ms": 45755
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "Under Article 12 of the General Data Protection Regulation (GDPR), data subjects have the right to transparent information, communication, and modalities for the exercise of their rights. Specifically, this includes the right to access their personal data (Article 15) and the right to object to processing activities (Article 21).\n\nAdditionally, data subjects have the right to rectification (Article 16), erasure (Article 17), restriction of processing (Article 18), and data portability (Article 20). They also have the right to be informed about a personal data breach (Article 33) and the right to object to automated individual decision-making, including profiling (Article 22).\n\nThese rights are designed to protect the data subject's autonomy and control over their personal data.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 25
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 788,
+        "prompt_tokens": 700,
+        "completion_tokens": 158,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 66751
+      },
+      "total_latency_ms": 66777
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 37 of the General Data Protection Regulation (GDPR), [1], the role of a Data Protection Officer (DPO) is to monitor compliance with this regulation. The DPO's tasks include monitoring the processing activities, providing advice on data protection matters, and reporting any violations.\n\nThe GDPR also outlines the position of the DPO in Article 38, stating that the DPO shall be appointed by the controller or processor. Additionally, Article 39 lists the specific tasks of the DPO, including:\n\n* Monitoring the processing activities\n* Providing advice on data protection matters\n* Reporting any violations to the supervisory authority\n* Conducting data protection impact assessments\n* Providing training for employees\n\nIt is worth noting that the GDPR requires organizations to appoint a DPO if they meet certain criteria, such as having more than 500 employees or offering goods or services to individuals.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 26
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 929,
+        "prompt_tokens": 620,
+        "completion_tokens": 180,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 58531
+      },
+      "total_latency_ms": 58558
+    },
+    {
+      "query_id": "legal-006",
+      "query": "Does GDPR apply to companies outside the European Union?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 95 of the GDPR [1], the Regulation does not apply to third countries (i.e., non-EU countries) unless there is a derogation for specific situations, as specified in Article 49. However, it also states that the Commission may adopt delegated acts which may modify or add to this provision.\n\nAdditionally, Article 50 mentions international cooperation for the protection of personal data, but does not explicitly state whether GDPR applies to companies outside the EU.\n\nIt is unclear based on the provided context whether GDPR directly applies to companies outside the European Union.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 25
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 602,
+        "prompt_tokens": 714,
+        "completion_tokens": 115,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 65052
+      },
+      "total_latency_ms": 65078
+    },
+    {
+      "query_id": "legal-007",
+      "query": "What permissions does the Apache 2.0 license grant?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "The Apache 2.0 license grants the following permissions:\n\n* You may use, reproduce, and distribute the software (as long as you comply with the terms of the license).\n* You are allowed to modify the source code and create derivative works.\n* You may distribute the software under the same license that it was originally distributed under.\n\nThese permissions are granted \"AS IS\" without warranties or conditions of any kind. [2]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 47
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 427,
+        "prompt_tokens": 476,
+        "completion_tokens": 87,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 44589
+      },
+      "total_latency_ms": 44637
+    },
+    {
+      "query_id": "legal-008",
+      "query": "What are the redistribution conditions under Apache 2.0?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "According to Section 3 of the Apache License, Version 2.0 [1], the terms and conditions for use, reproduction, and distribution are defined in Sections 1 through 9 of this document. Specifically, Section 4 states that \"Nothing in this License constitutes legal advice, nor shall it create any warranty.\" However, it does outline the redistribution conditions.\n\nRedistribution is permitted under the following conditions:\n\n- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n- Neither the name of the Licensor nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.\n\n[1] (source: apache_2_license.txt)",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 57
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 971,
+        "prompt_tokens": 476,
+        "completion_tokens": 181,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 61463
+      },
+      "total_latency_ms": 61521
+    },
+    {
+      "query_id": "legal-009",
+      "query": "What does the synthetic contract say about obligations?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_contract.md",
+        "synthetic_contract.md",
+        "apache_2_license.txt",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to [1], the party agrees to perform the following obligations under this agreement, which have their own subsections with detailed terms. However, the specific details of these obligations are not provided in the given context.\n\nThe context does not provide enough information to answer the question about what the synthetic contract says about obligations.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 50
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 367,
+        "prompt_tokens": 501,
+        "completion_tokens": 64,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 44257
+      },
+      "total_latency_ms": 44308
+    },
+    {
+      "query_id": "legal-010",
+      "query": "What is the fine amount in the Acme Corp 2023 data breach ruling?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "I don't have enough information to answer your question about the fine amount in the Acme Corp 2023 data breach ruling. The provided context only includes the General Data Protection Regulation (GDPR) text and does not mention any specific case or ruling, including Acme Corp.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 52
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 276,
+        "prompt_tokens": 623,
+        "completion_tokens": 57,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 51943
+      },
+      "total_latency_ms": 51996
+    }
+  ],
+  "extra": {
+    "refusal_accuracy": 1.0
+  }
+}
