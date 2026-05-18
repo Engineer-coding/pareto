@@ -327,6 +327,11 @@ def ask(
         "ollama/llama3.2:3b", "--model", "-m",
         help="LiteLLM model identifier.",
     ),
+    retriever: str = typer.Option(
+        "hybrid",
+        "--retriever", "-r",
+        help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
+    ),
     show_context: bool = typer.Option(
         False, "--show-context", help="Print the retrieved chunks before the answer.",
     ),
@@ -345,8 +350,26 @@ def ask(
     indexer = Indexer.load(index_dir)
     console.print(f"[dim]  → {indexer.store.size} chunks[/dim]")
 
+    # Build the requested retriever
+    if retriever == "dense":
+        from pareto.retrieval import DenseRetriever
+        retriever_obj = DenseRetriever(indexer)
+    elif retriever == "bm25":
+        from pareto.retrieval import BM25Ranker
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = ranker
+    elif retriever == "hybrid":
+        from pareto.retrieval import BM25Ranker, HybridRetriever
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
+    else:
+        console.print(f"[red]Unknown retriever:[/red] {retriever}")
+        raise typer.Exit(1)
+
     llm = LiteLLMClient(LLMConfig(model=model))
-    rag = NaiveRAG(indexer=indexer, llm=llm, top_k=top_k)
+    rag = NaiveRAG(retriever=retriever_obj, llm=llm, top_k=top_k)
 
     console.print(f"\n[bold cyan]Q:[/bold cyan] {question}")
     console.print(f"[dim]Thinking with {model}...[/dim]\n")
