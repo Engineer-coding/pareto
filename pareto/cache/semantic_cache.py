@@ -32,12 +32,16 @@ cosine similarity. For N=1000 entries × dim=384, ~0.5 ms on CPU.
 from __future__ import annotations
 
 import time
+import pickle
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
 
 from pareto.cache.lru import LRUCache
+
+
 
 
 @dataclass
@@ -243,6 +247,72 @@ class SemanticCache:
             "misses": self._semantic_misses,
             "hit_rate": self.hit_rate,
         }
+    
+    # ── persistence ───────────────────────────────────────────────────────
+    SAVE_FORMAT_VERSION = 1
+
+    def save(self, path: Path | str) -> None:
+        """
+        Atomic save to disk via pickle. Writes to <path>.tmp first, then
+        renames — partial writes never leave a corrupted cache on disk.
+        """
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        state = {
+            "version": self.SAVE_FORMAT_VERSION,
+            "capacity": self.capacity,
+            "threshold": self.threshold,
+            "entries": list(self._entries.items()),  # preserve LRU order
+            "next_id": self._next_id,
+            "hits": self._semantic_hits,
+            "misses": self._semantic_misses,
+        }
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        with open(tmp, "wb") as f:
+            pickle.dump(state, f, protocol=pickle.HIGHEST_PROTOCOL)
+        tmp.replace(path)  # atomic on POSIX, near-atomic on Windows
+
+    @classmethod
+    def load(cls, path: Path | str) -> "SemanticCache":
+        """
+        Load a previously saved cache. Returns a fresh empty cache if the
+        file doesn't exist or has an incompatible format (graceful fallback).
+        """
+        path = Path(path)
+        if not path.exists():
+            return cls()
+
+        try:
+            with open(path, "rb") as f:
+                state = pickle.load(f)
+        except (pickle.UnpicklingError, EOFError) as e:
+            import sys
+            print(
+                f"[pareto-cache] could not load {path}: {e}. "
+                f"Starting fresh.", file=sys.stderr,
+            )
+            return cls()
+
+        if state.get("version") != cls.SAVE_FORMAT_VERSION:
+            import sys
+            print(
+                f"[pareto-cache] {path} format v{state.get('version')} "
+                f"!= expected v{cls.SAVE_FORMAT_VERSION}. Starting fresh.",
+                file=sys.stderr,
+            )
+            return cls()
+
+        cache = cls(
+            capacity=state["capacity"],
+            threshold=state["threshold"],
+        )
+        cache._next_id = state["next_id"]
+        cache._semantic_hits = state["hits"]
+        cache._semantic_misses = state["misses"]
+        # Restore entries preserving LRU order
+        for eid, entry in state["entries"]:
+            cache._entries.add(eid, entry)
+        return cache
 
     def __repr__(self) -> str:
         return (

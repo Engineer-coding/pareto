@@ -317,43 +317,56 @@ def search(
 
 @app.command()
 def ask(
-    question: str = typer.Argument(..., help="Question in natural language."),
+    question: str = typer.Argument(..., help="Question to ask the index."),
     index_dir: Path = typer.Option(
-        Path("benchmarks/results/index"), "--index", "-i",
-        help="Directory of a saved index.",
+        Path("benchmarks/results/index"),
+        "--index-dir", "-i",
+        help="Directory of a saved Pareto index.",
     ),
-    top_k: int = typer.Option(4, "--k", "-k", help="Number of chunks to retrieve."),
     model: str = typer.Option(
         "ollama/llama3.2:3b", "--model", "-m",
         help="LiteLLM model identifier.",
     ),
+    top_k: int = typer.Option(5, "--top-k", "-k"),
     retriever: str = typer.Option(
-        "hybrid",
-        "--retriever", "-r",
+        "hybrid", "--retriever", "-r",
         help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
     ),
-    show_context: bool = typer.Option(
-        False, "--show-context", help="Print the retrieved chunks before the answer.",
+    no_cache: bool = typer.Option(
+        False, "--no-cache",
+        help="Bypass the semantic cache for this query.",
+    ),
+    cache_threshold: float = typer.Option(
+        0.92, "--cache-threshold",
+        help="Cosine similarity threshold for cache hits.",
+    ),
+    cache_capacity: int = typer.Option(
+        1000, "--cache-capacity",
+        help="Maximum number of cached entries.",
+    ),
+    cache_path: Path = typer.Option(
+        Path("benchmarks/results/cache.pkl"),
+        "--cache-path",
+        help="Where to persist the cache across CLI calls.",
     ),
 ) -> None:
-    """Ask a natural-language question against a Pareto index."""
-    from pareto.generation import LiteLLMClient, LLMConfig
+    """Ask a question against a saved Pareto index (full RAG pipeline)."""
+    from pareto.cache import SemanticCache
+    from pareto.generation.llm_client import LiteLLMClient, LLMConfig
     from pareto.indexing import Indexer
     from pareto.observability import QueryLogStore
-    
-    log_store = QueryLogStore()
+    from pareto.rag import NaiveRAG
 
     if not index_dir.exists():
-        console.print(
-            f"[red]No index at {index_dir}.[/red] Run `pareto index <corpus>` first."
-        )
+        console.print(f"[red]Index not found at {index_dir}[/red]")
         raise typer.Exit(1)
 
-    console.print(f"[dim]Loading index from {index_dir}...[/dim]")
+    # Load index
+    console.print(f"Loading index from {index_dir}...")
     indexer = Indexer.load(index_dir)
-    console.print(f"[dim]  → {indexer.store.size} chunks[/dim]")
+    console.print(f"  → {indexer.store.size} chunks")
 
-    # Build the requested retriever
+    # Build retriever
     if retriever == "dense":
         from pareto.retrieval import DenseRetriever
         retriever_obj = DenseRetriever(indexer)
@@ -371,50 +384,84 @@ def ask(
         console.print(f"[red]Unknown retriever:[/red] {retriever}")
         raise typer.Exit(1)
 
+    # Load or create cache (unless --no-cache)
+    cache = None
+    if not no_cache:
+        if cache_path.exists():
+            cache = SemanticCache.load(cache_path)
+            # Override threshold/capacity at runtime if user passed flags
+            cache.threshold = cache_threshold
+        else:
+            cache = SemanticCache(
+                capacity=cache_capacity,
+                threshold=cache_threshold,
+            )
+
+    # Build LLM + log store + RAG
+    log_store = QueryLogStore()
     llm = LiteLLMClient(LLMConfig(model=model))
-    rag = NaiveRAG(retriever=retriever_obj, llm=llm, top_k=top_k, log_store=log_store)
+    rag = NaiveRAG(
+        retriever=retriever_obj,
+        llm=llm,
+        top_k=top_k,
+        log_store=log_store,
+        cache=cache,
+    )
 
-    console.print(f"\n[bold cyan]Q:[/bold cyan] {question}")
-    console.print(f"[dim]Thinking with {model}...[/dim]\n")
-
+    # Run the query
+    console.print(f"Q: [bold]{question}[/bold]")
+    console.print(f"Thinking with {model}...")
     response = rag.query(question)
 
-    # Optional: show what was retrieved
-    if show_context:
-        console.print("[bold]Retrieved context:[/bold]")
-        for i, hit in enumerate(response.retrieved, 1):
-            src = Path(hit.record.source).name
-            preview = hit.record.content[:160].replace("\n", " ")
+    # Display cache status FIRST if hit (most exciting line)
+    if response.extra.get("cache_hit"):
+        sim = response.extra.get("cache_similarity", 0)
+        orig_query = response.extra.get("cached_original_query", "")
+        console.print(
+            f"\n[bold green]⚡ Cache HIT[/bold green] "
+            f"(similarity={sim:.4f})"
+        )
+        if orig_query != question:
             console.print(
-                f"  [cyan]{i}.[/cyan] [yellow]score={hit.score:.3f}[/yellow] [dim]{src}[/dim]"
+                f"[dim]   Reusing cached answer from: \"{orig_query}\"[/dim]"
             )
-            console.print(f"     {preview}...")
-        console.print()
 
-    # Answer
-    console.print("[bold green]Answer:[/bold green]")
+    # Display answer
+    console.print(f"\n[bold]Answer:[/bold]")
     console.print(response.answer)
-    console.print()
 
-    # Citations
-    citations = response.citations()
+    # Sources
+    citations = response.citations() or response.extra.get("cached_citations", [])
     if citations:
-        console.print("[bold]Sources:[/bold]")
+        console.print(f"\n[bold]Sources:[/bold]")
         for i, src in enumerate(citations, 1):
-            console.print(f"  [{i}] {Path(src).name}")
+            console.print(f"  [{i}] {src}")
 
     # Stats footer
-    console.print()
-    console.print(
-        f"[dim]Stats: "
-        f"{response.total_tokens} tokens "
-        f"(prompt={response.prompt_tokens}, completion={response.completion_tokens}) | "
-        f"retrieval={response.retrieval_latency_ms}ms | "
-        f"generation={response.generation_latency_ms}ms | "
-        f"total={response.total_latency_ms}ms | "
-        f"cost=${response.cost_usd:.5f}"
-        f"[/dim]"
-    )
+    if response.extra.get("cache_hit"):
+        orig_lat = response.extra.get("original_generation_latency_ms", 0)
+        orig_cost = response.extra.get("original_cost_usd", 0)
+        console.print(
+            f"\n[dim]Stats: cached response | "
+            f"total={response.total_latency_ms}ms | "
+            f"saved ~{orig_lat:,}ms + ${orig_cost:.5f}[/dim]"
+        )
+    else:
+        console.print(
+            f"\n[dim]Stats: {response.total_tokens} tokens "
+            f"(prompt={response.prompt_tokens}, completion={response.completion_tokens}) "
+            f"| retrieval={response.retrieval_latency_ms}ms "
+            f"| generation={response.generation_latency_ms}ms "
+            f"| total={response.total_latency_ms}ms "
+            f"| cost=${response.cost_usd:.5f}[/dim]"
+        )
+
+    # Save cache for next CLI call
+    if cache is not None:
+        try:
+            cache.save(cache_path)
+        except Exception as e:
+            console.print(f"[yellow]Warning: cache save failed: {e}[/yellow]")
 
 @app.command()
 def benchmark(
