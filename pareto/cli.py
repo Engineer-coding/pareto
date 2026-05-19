@@ -791,12 +791,35 @@ def _stats_show_overall(store, since_dt) -> None:
     table.add_row("Avg generation latency", f"{(overall.get('avg_generation_latency_ms') or 0):.0f} ms")
     table.add_row("Avg total latency", f"{(overall.get('avg_total_latency_ms') or 0):.0f} ms")
     table.add_row("Max total latency", f"{(overall.get('max_total_latency_ms') or 0):,} ms")
+    # Cache section
+    cache_hits = overall.get("cache_hits") or 0
+    cache_rate = overall.get("cache_hit_rate") or 0
+    avg_sim = overall.get("avg_cache_similarity")
+    table.add_row("[bold cyan]Cache hits[/bold cyan]",
+                  f"[bold cyan]{cache_hits} ({cache_rate:.1%})[/bold cyan]")
+    if avg_sim is not None:
+        table.add_row("Avg cache similarity", f"{avg_sim:.4f}")
     console.print(table)
+
+    # Savings table (only if there are hits)
+    if cache_hits > 0:
+        savings = store.total_savings(since=since_dt)
+        save_tbl = Table(title="Cache Savings (phantom cost)")
+        save_tbl.add_column("Metric")
+        save_tbl.add_column("Value", justify="right")
+        save_tbl.add_row("Cache hits served", f"{savings['hits']:,}")
+        save_tbl.add_row("Cost saved (USD)", f"${savings['saved_cost_usd']:.5f}")
+        save_tbl.add_row("Latency saved", f"{savings['saved_latency_ms']:,} ms")
+        save_tbl.add_row("≈ time equivalent", f"{savings['saved_latency_ms']/1000:.1f} s")
+        console.print()
+        console.print(save_tbl)
 
 
 def _stats_show_grouped(store, group_by: str, since_dt) -> None:
-    if group_by not in ("model", "retriever"):
-        console.print(f"[red]--by must be 'model' or 'retriever', got {group_by!r}[/red]")
+    if group_by not in ("model", "retriever", "cache_hit"):
+        console.print(
+            f"[red]--by must be 'model', 'retriever', or 'cache_hit', got {group_by!r}[/red]"
+        )
         raise typer.Exit(2)
 
     agg = store.aggregate(since=since_dt, group_by=group_by)
@@ -811,20 +834,23 @@ def _stats_show_grouped(store, group_by: str, since_dt) -> None:
     table = Table(title=title)
     table.add_column(group_by.capitalize())
     table.add_column("count", justify="right")
-    table.add_column("total tokens", justify="right")
+    table.add_column("cache hits", justify="right")
+    table.add_column("hit rate", justify="right")
     table.add_column("total cost", justify="right")
-    table.add_column("avg retr ms", justify="right")
     table.add_column("avg gen ms", justify="right")
     table.add_column("avg total ms", justify="right")
 
     sorted_groups = sorted(agg.items(), key=lambda kv: -(kv[1].get("count") or 0))
     for group_name, stats in sorted_groups:
+        hit_rate = stats.get("cache_hit_rate") or 0
+        cache_hits = stats.get("cache_hits") or 0
+        hit_rate_str = f"[bold cyan]{hit_rate:.1%}[/bold cyan]" if hit_rate > 0 else f"{hit_rate:.1%}"
         table.add_row(
             str(group_name),
             f"{stats['count']:,}",
-            f"{(stats.get('total_tokens') or 0):,}",
+            f"{cache_hits:,}",
+            hit_rate_str,
             f"${(stats.get('total_cost_usd') or 0):.5f}",
-            f"{(stats.get('avg_retrieval_latency_ms') or 0):.0f}",
             f"{(stats.get('avg_generation_latency_ms') or 0):.0f}",
             f"{(stats.get('avg_total_latency_ms') or 0):.0f}",
         )
@@ -846,6 +872,7 @@ def _stats_show_recent(store, n: int, show_questions: bool) -> None:
         table.add_column("question")
     table.add_column("tokens", justify="right")
     table.add_column("cost", justify="right")
+    table.add_column("cache", justify="center")
     table.add_column("total ms", justify="right")
 
     for r in rows:
@@ -861,9 +888,11 @@ def _stats_show_recent(store, n: int, show_questions: bool) -> None:
             if len(r["question"] or "") > 55:
                 q += "..."
             row_items.append(q)
+        cache_marker = "⚡" if r.get("cache_hit") else "—"
         row_items.extend([
             f"{(r['total_tokens'] or 0):,}",
             f"${(r['cost_usd'] or 0):.5f}",
+            cache_marker,
             f"{(r['total_latency_ms'] or 0):,}",
         ])
         table.add_row(*row_items)
