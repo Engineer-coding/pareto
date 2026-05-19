@@ -223,6 +223,10 @@ class SemanticCache:
 
     def __len__(self) -> int:
         return len(self._entries)
+    
+    def __bool__(self) -> bool:
+        """Always truthy — instance presence ≠ emptiness."""
+        return True
 
     # ── observability ─────────────────────────────────────────────────────
     @property

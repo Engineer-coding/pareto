@@ -2,20 +2,21 @@
 NaiveRAG — the baseline pipeline.
 
 Pure pipeline, no optimization:
-    1. Retrieve top-k candidates (via injected retriever).
-    2. Concatenate retrieved chunks into a prompt.
-    3. Single LLM call.
-    4. Wrap everything into a RAGResponse with latency / cost breakdown.
+    1. (Optional) Semantic cache lookup. Hit → instant response.
+    2. Retrieve top-k candidates (via injected retriever).
+    3. Concatenate retrieved chunks into a prompt.
+    4. Single LLM call.
+    5. (Optional) Cache the response keyed by query embedding.
+    6. Wrap everything into a RAGResponse with latency / cost breakdown.
 
 Retriever-agnostic since Week 2: any object with `search(query, k) -> list[Hit]`
 works (DenseRetriever, BM25Ranker, HybridRetriever, future cached retrievers).
-The retriever is the only knob that controls retrieval quality; the rest of
-the pipeline (prompt build, LLM call) is identical across configurations.
+Cache-aware since Week 3: optional SemanticCache injected at construction.
 
-This is intentionally the simplest possible RAG. Week 2+ layers (hybrid
-retrieval, semantic cache, adaptive routing, knowledge graph) plug in via
-the retriever interface. If a new retriever doesn't beat the dense baseline
-on the benchmark, it doesn't earn its place.
+Cache hits bypass retrieval and generation entirely — ~10-15ms total latency
+vs. ~50000ms LLM call. The cost field is set to 0 for cache hits (no LLM
+charge), with the original generation cost preserved in `extra` for
+"savings" projection in observability.
 """
 
 from __future__ import annotations
@@ -46,34 +47,30 @@ class NaiveRAG:
         user_template: str = DEFAULT_RAG_USER_TEMPLATE,
         max_context_chars: int = 6000,
         log_store=None,
+        cache=None,
     ):
         """
         Args:
             indexer: built Indexer. Required if `retriever` is None.
             llm: LLM client. Defaults to LiteLLMClient (Ollama llama3.2:3b).
             top_k: number of chunks to retrieve.
-            retriever: any retriever exposing `search(query, k) -> list[Hit]`
-                where each Hit has `.record` and `.score`. If None, builds
-                a DenseRetriever from `indexer`.
+            retriever: any retriever exposing `search(query, k) -> list[Hit]`.
+                If None, builds a DenseRetriever from `indexer`.
             system_prompt: RAG system prompt template.
-            user_template: User-side prompt template (must contain {context}, {question}).
+            user_template: User-side prompt template ({context}, {question}).
             max_context_chars: truncate concatenated context above this size.
-                Keeps prompts inside local-model windows and bounds cost.
+            log_store: optional QueryLogStore for persistence.
+            cache: optional SemanticCache for embedding-based dedup.
         """
-        # Resolve the retriever first — it's the new primary dependency
+        # Resolve retriever
         if retriever is None:
             if indexer is None:
-                raise ValueError(
-                    "NaiveRAG requires either `indexer` or `retriever`."
-                )
+                raise ValueError("NaiveRAG requires either `indexer` or `retriever`.")
             from pareto.retrieval.dense import DenseRetriever
             retriever = DenseRetriever(indexer)
-
         self.retriever = retriever
 
-        # Keep indexer accessible for backward compatibility and introspection
-        # (e.g. BenchmarkRunner.end_to_end may inspect rag.indexer).
-        # If the caller didn't pass one, try to find it on the retriever.
+        # Keep indexer accessible — also needed for cache embeddings
         self.indexer = indexer if indexer is not None else getattr(
             retriever, "indexer", None
         )
@@ -84,23 +81,55 @@ class NaiveRAG:
         self.user_template = user_template
         self.max_context_chars = max_context_chars
         self.log_store = log_store
+        self.cache = cache
 
     # ── public API ────────────────────────────────────────────────────────
     def query(self, question: str, top_k: int | None = None) -> RAGResponse:
         """Run the full RAG pipeline for a single question."""
         k = top_k or self.top_k
         t0 = time.perf_counter()
+        retriever_name = type(self.retriever).__name__
 
-        # Step 1: retrieval (delegated to the injected retriever)
+        # ── 1. Embed query (used for cache lookup AND retrieval) ──
+        # We compute the embedding once if we have an indexer; otherwise
+        # the retriever owns its own embedding logic (cache is bypassed).
+        query_embedding = None
+        if self.indexer is not None and self.cache is not None:
+            try:
+                query_embedding = self.indexer.embedder.encode_query(question)
+            except Exception as e:
+                import sys
+                print(f"[pareto-rag] cache embed failed: {e}", file=sys.stderr)
+                query_embedding = None
+
+        # ── 2. Cache lookup ──
+        if self.cache is not None and query_embedding is not None:
+            try:
+                hit = self.cache.lookup(
+                    query_embedding=query_embedding,
+                    retriever=retriever_name,
+                    top_k=k,
+                    model=self.llm.model_name,
+                    valid_chunk_ids=None,  # Future: pass current store chunk_ids
+                )
+            except Exception as e:
+                import sys
+                print(f"[pareto-rag] cache lookup failed: {e}", file=sys.stderr)
+                hit = None
+
+            if hit is not None:
+                return self._cache_hit_response(question, hit, k, retriever_name, t0)
+
+        # ── 3. Retrieval (cache miss path) ──
         t_retr_start = time.perf_counter()
         hits = self.retriever.search(question, k=k)
         retrieval_latency_ms = int((time.perf_counter() - t_retr_start) * 1000)
 
-        # Step 2: prompt build
+        # ── 4. Prompt build ──
         context = self._build_context(hits)
         user_prompt = self.user_template.format(context=context, question=question)
 
-        # Step 3: generation
+        # ── 5. Generation ──
         t_gen_start = time.perf_counter()
         llm_resp = self.llm.generate(
             [
@@ -112,7 +141,7 @@ class NaiveRAG:
 
         total_latency_ms = int((time.perf_counter() - t0) * 1000)
 
-
+        # ── 6. Build response ──
         response = RAGResponse(
             question=question,
             answer=llm_resp.text,
@@ -125,32 +154,103 @@ class NaiveRAG:
             cost_usd=llm_resp.cost_usd,
             generation_latency_ms=generation_latency_ms,
             total_latency_ms=total_latency_ms,
+            extra={"cache_hit": False},
         )
 
-        # Best-effort logging. Failures never break the query.
+        # ── 7. Cache write (best-effort) ──
+        if self.cache is not None and query_embedding is not None:
+            try:
+                chunks_used = [
+                    hit.record.chunk_id
+                    for hit in hits
+                    if hasattr(hit, "record") and hasattr(hit.record, "chunk_id")
+                ]
+                self.cache.add(
+                    query=question,
+                    query_embedding=query_embedding,
+                    retriever=retriever_name,
+                    top_k=k,
+                    model=llm_resp.model,
+                    answer=llm_resp.text,
+                    prompt_tokens=llm_resp.prompt_tokens,
+                    completion_tokens=llm_resp.completion_tokens,
+                    cost_usd=llm_resp.cost_usd,
+                    generation_latency_ms=generation_latency_ms,
+                    chunks_used_ids=chunks_used,
+                    citations=response.citations(),
+                )
+            except Exception as e:
+                import sys
+                print(f"[pareto-rag] cache write failed: {e}", file=sys.stderr)
+
+        # ── 8. Query log write (best-effort) ──
         if self.log_store is not None:
             try:
                 self.log_store.log(
                     response,
-                    retriever=type(self.retriever).__name__,
+                    retriever=retriever_name,
                     top_k=k,
                 )
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 import sys
-                print(
-                    f"[pareto-rag] log_store.log() failed: {e}",
-                    file=sys.stderr,
-                )
+                print(f"[pareto-rag] log_store.log() failed: {e}", file=sys.stderr)
 
         return response
 
     # ── helpers ───────────────────────────────────────────────────────────
-    def _build_context(self, hits: list) -> str:
-        """Render hits as numbered blocks, truncating to max_context_chars.
+    def _cache_hit_response(
+        self,
+        question: str,
+        hit,
+        k: int,
+        retriever_name: str,
+        t0: float,
+    ) -> RAGResponse:
+        """Build a RAGResponse from a SemanticCache hit. Fast path."""
+        entry = hit.entry
+        total_latency_ms = int((time.perf_counter() - t0) * 1000)
 
-        Accepts any hit object with `.record` (which itself has `.content`
-        and `.source`) — works for SearchResult, BM25Hit, HybridHit.
-        """
+        response = RAGResponse(
+            question=question,
+            answer=entry.answer,
+            retrieved=[],  # cache doesn't store retrieved objects, just chunk_ids
+            retrieval_latency_ms=0,
+            model=entry.model,
+            prompt_tokens=entry.prompt_tokens,
+            completion_tokens=entry.completion_tokens,
+            total_tokens=entry.prompt_tokens + entry.completion_tokens,
+            cost_usd=0.0,  # cache hit costs nothing
+            generation_latency_ms=0,
+            total_latency_ms=total_latency_ms,
+            extra={
+                "cache_hit": True,
+                "cache_similarity": hit.similarity,
+                "cached_original_query": entry.query,
+                "cached_at_unix": entry.timestamp_unix,
+                "cached_access_count": entry.access_count,
+                "cached_citations": list(entry.citations),
+                # "Phantom" cost — what we would have paid if not cached
+                "original_cost_usd": entry.cost_usd,
+                "original_generation_latency_ms": entry.generation_latency_ms,
+            },
+        )
+
+        # Still log cache hits — observability needs to see them
+        if self.log_store is not None:
+            try:
+                self.log_store.log(
+                    response,
+                    retriever=retriever_name,
+                    top_k=k,
+                )
+            except Exception as e:
+                import sys
+                print(f"[pareto-rag] log_store.log() failed: {e}", file=sys.stderr)
+
+        return response
+
+    def _build_context(self, hits: list) -> str:
+        """Render hits as numbered blocks, truncating to max_context_chars."""
         if not hits:
             return "(no relevant context found)"
 
@@ -160,8 +260,6 @@ class NaiveRAG:
             src_name = Path(hit.record.source).name
             block = format_context_block(i, hit.record.content, src_name)
             if total + len(block) > self.max_context_chars and blocks:
-                # Stop if adding this block would exceed the cap
-                # (but always include at least one block)
                 break
             blocks.append(block)
             total += len(block)
@@ -170,7 +268,9 @@ class NaiveRAG:
 
     def __repr__(self) -> str:
         retriever_type = type(self.retriever).__name__
+        cache_name = type(self.cache).__name__ if self.cache is not None else "None"
         return (
             f"NaiveRAG(retriever={retriever_type}, "
-            f"top_k={self.top_k}, model={self.llm.model_name})"
+            f"top_k={self.top_k}, model={self.llm.model_name}, "
+            f"cache={cache_name})"
         )

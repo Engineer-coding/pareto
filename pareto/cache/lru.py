@@ -92,6 +92,9 @@ class LRUCache(Generic[K, V]):
 
     def __contains__(self, key: K) -> bool:
         return key in self._data
+    
+    def __bool__(self) -> bool:
+        return True
 
     # ── observability ─────────────────────────────────────────────────────
     @property
