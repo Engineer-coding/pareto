@@ -84,15 +84,24 @@ class NaiveRAG:
         self.cache = cache
 
     # ── public API ────────────────────────────────────────────────────────
-    def query(self, question: str, top_k: int | None = None) -> RAGResponse:
-        """Run the full RAG pipeline for a single question."""
+    def query(self, question: str, top_k: int | None = None, retriever=None) -> RAGResponse:
+        """
+        Run the full RAG pipeline for a single question.
+
+        Args:
+            question: the user query.
+            top_k: override the default retrieval depth.
+            retriever: override the configured retriever for this call.
+                Used by RoutedRAG to apply per-query routing decisions.
+                Cache keys include the retriever name, so a deterministic
+                router keeps cache lookups consistent.
+        """
         k = top_k or self.top_k
         t0 = time.perf_counter()
-        retriever_name = type(self.retriever).__name__
+        active_retriever = retriever if retriever is not None else self.retriever
+        retriever_name = type(active_retriever).__name__
 
-        # ── 1. Embed query (used for cache lookup AND retrieval) ──
-        # We compute the embedding once if we have an indexer; otherwise
-        # the retriever owns its own embedding logic (cache is bypassed).
+        # ── 1. Embed query (cache lookup + retrieval share it) ──
         query_embedding = None
         if self.indexer is not None and self.cache is not None:
             try:
@@ -110,7 +119,7 @@ class NaiveRAG:
                     retriever=retriever_name,
                     top_k=k,
                     model=self.llm.model_name,
-                    valid_chunk_ids=None,  # Future: pass current store chunk_ids
+                    valid_chunk_ids=None,
                 )
             except Exception as e:
                 import sys
@@ -122,7 +131,7 @@ class NaiveRAG:
 
         # ── 3. Retrieval (cache miss path) ──
         t_retr_start = time.perf_counter()
-        hits = self.retriever.search(question, k=k)
+        hits = active_retriever.search(question, k=k)
         retrieval_latency_ms = int((time.perf_counter() - t_retr_start) * 1000)
 
         # ── 4. Prompt build ──
@@ -138,7 +147,6 @@ class NaiveRAG:
             ]
         )
         generation_latency_ms = int((time.perf_counter() - t_gen_start) * 1000)
-
         total_latency_ms = int((time.perf_counter() - t0) * 1000)
 
         # ── 6. Build response ──
@@ -161,9 +169,9 @@ class NaiveRAG:
         if self.cache is not None and query_embedding is not None:
             try:
                 chunks_used = [
-                    hit.record.chunk_id
-                    for hit in hits
-                    if hasattr(hit, "record") and hasattr(hit.record, "chunk_id")
+                    h.record.chunk_id
+                    for h in hits
+                    if hasattr(h, "record") and hasattr(h.record, "chunk_id")
                 ]
                 self.cache.add(
                     query=question,
@@ -186,11 +194,7 @@ class NaiveRAG:
         # ── 8. Query log write (best-effort) ──
         if self.log_store is not None:
             try:
-                self.log_store.log(
-                    response,
-                    retriever=retriever_name,
-                    top_k=k,
-                )
+                self.log_store.log(response, retriever=retriever_name, top_k=k)
             except Exception as e:
                 import sys
                 print(f"[pareto-rag] log_store.log() failed: {e}", file=sys.stderr)
