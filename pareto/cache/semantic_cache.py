@@ -76,8 +76,19 @@ class SemanticCache:
     def __init__(
         self,
         capacity: int = 1000,
-        threshold: float = 0.92,
+        threshold: float = 0.93,
     ):
+        """
+        Args:
+            capacity: max cached entries (LRU eviction beyond this).
+            threshold: cosine similarity for a cache hit. Default 0.93,
+                chosen via Week 3 threshold sweep (scripts/tune_threshold.py):
+                0.93 strictly dominates 0.92 (6 true / 5 false vs 5 true /
+                6 false), preserves 24.4% hit rate, and most "false" hits
+                return acceptable answers (similar questions share sources).
+                For quality-critical use, 0.95 gives zero strict false hits
+                at the cost of recall (catches 4/15 paraphrases).
+        """
         if not 0 < threshold <= 1.0:
             raise ValueError(f"threshold must be in (0, 1], got {threshold}")
         if capacity <= 0:
