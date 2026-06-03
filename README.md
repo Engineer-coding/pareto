@@ -7,7 +7,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Status: Week 2 of 8](https://img.shields.io/badge/status-week%202%20of%208-orange.svg)]()
+[![Status: Week 3 of 8](https://img.shields.io/badge/status-week%203%20of%208-orange.svg)]()
 
 </div>
 
@@ -18,7 +18,7 @@ Pareto helps you *afford* it.
 
 Production RAG systems are expensive: high LLM call volume, large context windows, repeated queries hitting the LLM unnecessarily, and noisy retrieval. Pareto attacks every one of these problems with opinionated, **measurable** engineering.
 
-Every optimization layer in Pareto must beat the naive baseline on a published benchmark — or it doesn't ship.
+Every optimization layer in Pareto must beat the naive baseline on a published benchmark — or it doesn't ship. And every optimization must preserve answer quality, not just cut cost.
 
 ## Why Pareto
 
@@ -27,42 +27,60 @@ LangChain, LlamaIndex, Haystack and friends make it *easy* to assemble a RAG. No
 Pareto inverts the priority. Cost is a first-class concern in every layer:
 
 - **Hybrid retrieval** — BM25 + dense vectors via Reciprocal Rank Fusion (Week 2 ✓)
-- **Hierarchical chunking** — tree-based parent-child retrieval; smaller indexed chunks, broader context on demand (Week 1 ✓)
+- **Hierarchical chunking** — tree-based parent-child retrieval (Week 1 ✓)
 - **HNSW vector index** — tuned for throughput, runtime ef_search adjustable (Week 1 ✓)
 - **Built-in cost & latency observability** — SQLite query log + `pareto stats` (Week 2 ✓)
-- **Semantic caching** — semantically similar queries reuse cached responses (Week 3)
+- **Semantic caching** — semantically similar queries reuse cached responses, ~1264x faster, $0 (Week 3 ✓)
 - **Adaptive query routing** — simple queries don't need the expensive model (Week 4)
 - **Lightweight knowledge graph** — entity-based augmentation for multi-hop queries (Week 7)
 
 Every layer can be benchmarked independently. The repo includes the test set, the metrics framework, and persisted baseline reports for every milestone.
 
-## Current Baseline — Week 2
+## Current Baseline
 
-The numbers below are real, reproducible with `pareto benchmark`, and committed under `benchmarks/results/`.
+### Retrieval (30 queries, k=5)
 
-### Retrieval-only Benchmark (30 queries, k=5)
-
-| Metric | Dense (Week 1) | BM25 | **Hybrid (default)** |
+| Metric | Dense | BM25 | **Hybrid (default)** |
 | :--- | ---: | ---: | ---: |
 | hit@5 | 100.00% | 100.00% | 100.00% |
 | **MRR** | 0.981 | 0.981 | **1.000** |
-| precision@5 | **0.800** | 0.697 | 0.762 |
-| recall@5 | 1.000 | 1.000 | 1.000 |
 | avg retrieval latency | 29 ms | **0 ms** | 32 ms |
 
-**Hybrid wins on MRR = 1.000** — the correct source always ranks first. This matters: the LLM attends to the top of the prompt most strongly, so MRR translates directly into answer quality.
+### Semantic Cache (45-query test set, 30 original + 15 paraphrase)
 
-> The dense baseline already achieves perfect recall on a small test set. Hybrid's real advantage shows up in queries with rare keywords, regulation numbers ("GDPR Article 17"), and Turkish queries where BM25's exact-match power complements dense semantic search.
+| Threshold | Hit Rate | Keyword Coverage | Verdict |
+| :--- | ---: | ---: | :--- |
+| 0.92 (default) | 24.4% | 0.878 | Quality preserved ✓ |
+| 0.85 | 71.1% | 0.634 | Too aggressive — false hits |
 
-**Test set:** 30 hand-authored queries across legal, finance, health domains (3 NO_ANSWER for hallucination detection).
-**Corpus:** 13 documents (English + Turkish), 381 leaf chunks after hierarchical chunking.
-**Embedder:** `intfloat/multilingual-e5-small` (384-dim, 100+ languages, MIT).
-**LLM:** `ollama/llama3.2:3b` (local, $0 / query).
+Cache hit latency **~76 ms** vs **~96,000 ms** for a fresh LLM call on CPU — a **1264x speedup**, at **$0** cost.
+
+## Semantic Cache
+
+A query that's semantically similar to a previously-answered one returns the cached response instantly — no LLM call, no cost. The match is by embedding cosine similarity, not exact text, so paraphrases hit too.
+
+```bash
+pareto ask "What is GDPR?"        # cold: ~96s, full LLM
+pareto ask "What is GDPR?"        # hit:  ~76ms, $0  ⚡
+pareto ask "Explain GDPR" --cache-threshold 0.90   # paraphrase hit ⚡
+```
+
+**Threshold is a quality/cost tradeoff, not a free dial.** Lowering it raises hit rate but introduces *false hits* — semantically-near but distinct queries returning the wrong answer. Pareto reports the **quality-adjusted** hit rate: keyword coverage is the canary, and it collapses (0.878 → 0.634) when the threshold drops too far. We don't chase a bigger number by sacrificing correctness.
+
+**Cache invalidation is automatic.** Each entry remembers which chunks produced its answer (Week 1's deterministic chunk IDs). When the corpus changes, stale entries are skipped — no manual cache clear needed.
+
+**Cost projection** (GPT-4o, 100K queries/day, conservative 24.4% hit):
+
+| Provider | Annual (no cache) | Saved by cache |
+| :--- | ---: | ---: |
+| GPT-4o | $93,075 | **$22,710** |
+| Claude Sonnet 4.6 | $122,640 | **$29,924** |
+
+Full breakdown in [`docs/COST_PROJECTION.md`](./docs/COST_PROJECTION.md).
 
 ## Quickstart
 
 ```bash
-# Clone and install
 git clone https://github.com/Engineer-coding/pareto.git
 cd pareto
 uv venv --python 3.10
@@ -70,26 +88,28 @@ uv venv --python 3.10
 # source .venv/bin/activate    # Linux/macOS
 uv pip install -e .
 
-# (Optional) pull a local LLM for $0-cost generation
-ollama pull llama3.2:3b
+ollama pull llama3.2:3b        # optional, $0-cost local LLM
 
-# Walk a corpus, build an index, ask questions
 pareto index ./benchmarks/corpus
-pareto search "What is GDPR?"
 pareto ask "What are the key principles of GDPR?"
 
-# Try different retrievers
-pareto ask "GDPR Article 17?" --retriever dense
-pareto ask "GDPR Article 17?" --retriever bm25
-pareto ask "GDPR Article 17?" --retriever hybrid   # default
+# Cache in action
+pareto ask "What is GDPR?"                          # cold
+pareto ask "What is GDPR?"                           # cache hit ⚡
+pareto ask "Explain GDPR" --cache-threshold 0.90    # paraphrase hit
+pareto ask "What is GDPR?" --no-cache                # bypass cache
 
-# Check what you spent
-pareto stats
-pareto stats --by retriever
-pareto stats --slow 30000
+# Different retrievers
+pareto ask "GDPR Article 17?" --retriever bm25
+
+# Observability
+pareto stats                    # overall + cache hit rate + savings
+pareto stats --by cache_hit     # hit vs miss latency breakdown
 
 # Benchmark
 pareto benchmark --retriever hybrid --mode retrieval --k 5
+pareto benchmark --test-set benchmarks/queries/queries_with_dupes.yaml \
+    --mode end_to_end --cache-threshold 0.92
 ```
 
 ## Architecture
@@ -101,35 +121,35 @@ pareto benchmark --retriever hybrid --mode retrieval --k 5
 │   Pydantic   │    │  Tree-based  │    │  + BM25 inv. │
 └──────────────┘    └──────────────┘    └──────┬───────┘
                                                 │
-                                                ▼
-                                     ┌────────────────────┐
-                                     │   Retrieval Layer  │
-                                     │ ┌────────────────┐ │
-                                     │ │ Dense (E5)     │ │
-                                     │ ├────────────────┤ │
-                                     │ │ BM25 (custom)  │ │
-                                     │ ├────────────────┤ │
-                                     │ │ Hybrid (RRF)   │◀┼─── default
-                                     │ └────────────────┘ │
-                                     └──────────┬─────────┘
-                                                │
-                                                ▼
-                                     ┌────────────────────┐
-                                     │     Generation     │
-                                     │  LiteLLM wrapper   │
-                                     │  Ollama / OpenAI   │
-                                     │  Anthropic / ...   │
-                                     └──────────┬─────────┘
-                                                │
-                                                ▼
-                                     ┌────────────────────┐
-                                     │   Observability    │
-                                     │  SQLite query log  │
-                                     │  pareto stats CLI  │
-                                     └────────────────────┘
+                        ┌───────────────────────┘
+                        ▼
+                ┌────────────────┐
+   query  ────▶ │ Semantic Cache │ ──(hit, ~76ms, $0)──▶ response ⚡
+                └───────┬────────┘
+                        │ (miss)
+                        ▼
+             ┌────────────────────┐
+             │   Retrieval Layer  │
+             │  Dense/BM25/Hybrid │
+             │      (via RRF)     │
+             └──────────┬─────────┘
+                        ▼
+             ┌────────────────────┐
+             │     Generation     │
+             │  LiteLLM wrapper   │
+             └──────────┬─────────┘
+                        │
+                        ├──▶ Cache write (with chunk provenance)
+                        ▼
+             ┌────────────────────┐
+             │   Observability    │
+             │  SQLite query log  │
+             │  cache hit rate +  │
+             │  savings projection│
+             └────────────────────┘
 
-         ◀─── Benchmark Suite (P@k, R@k, MRR, refusal accuracy, e2e) ───▶
-         ◀─── Multilingual Support (English + Turkish, 100+ via E5)    ───▶
+    ◀── Benchmark Suite (P@k, R@k, MRR, refusal acc, cache hit rate) ──▶
+    ◀── Multilingual (English + Turkish, 100+ via E5) ──▶
 ```
 
 ## CLI
@@ -137,25 +157,22 @@ pareto benchmark --retriever hybrid --mode retrieval --k 5
 | Command | What it does |
 | :--- | :--- |
 | `pareto ingest <dir>` | Load supported documents from a directory |
-| `pareto chunk <file>` | Build and visualize a chunk tree for one document |
-| `pareto chunk-corpus <dir>` | Batch-chunk a corpus, emit a JSON report |
+| `pareto chunk <file>` | Build and visualize a chunk tree |
 | `pareto index <dir>` | Ingest + chunk + embed + persist a vector index |
 | `pareto search "<query>"` | Semantic search over a saved index |
-| `pareto ask "<question>" [--retriever]` | Ask a question against the index (full RAG) |
-| `pareto stats` | Query log statistics: cost, latency, breakdowns |
+| `pareto ask "<question>"` | Full RAG with cache (`--retriever`, `--no-cache`, `--cache-threshold`) |
+| `pareto stats` | Cost, latency, cache hit rate, savings projection |
 | `pareto serve` | Start the FastAPI HTTP server |
-| `pareto benchmark` | Run the test set against the system, emit a JSON report |
+| `pareto benchmark` | Run the test set, emit a JSON report (`--test-set`, `--cache-threshold`) |
 
 ### `pareto stats` Examples
 
 ```bash
-pareto stats                       # overall summary + last 10 queries
-pareto stats --last 50             # last 50 queries
+pareto stats                       # overall + cache section + savings
+pareto stats --by retriever        # hit rate per retriever
+pareto stats --by cache_hit        # hit vs miss latency (488x gap)
 pareto stats --since 24h           # last 24 hours
-pareto stats --by retriever        # group by retriever (count, cost, latency)
-pareto stats --by model            # group by LLM model
-pareto stats --slow 30000          # queries slower than 30 seconds
-pareto stats --show-questions      # include question text in tables
+pareto stats --slow 30000          # slow queries (cache hits excluded)
 ```
 
 ## Roadmap
@@ -163,9 +180,9 @@ pareto stats --show-questions      # include question text in tables
 | Week | Milestone | Status |
 | :---: | :--- | :---: |
 | 1 | Scaffolding, hierarchical chunking, naive baseline, benchmark suite | ✅ |
-| 2 | Hybrid retrieval (BM25 + dense), observability dashboard | ✅ |
-| 3 | Semantic cache (LRU + embedding-based) | 🚧 |
-| 4 | Adaptive query router | ⏳ |
+| 2 | Hybrid retrieval (BM25 + dense), observability | ✅ |
+| 3 | Semantic cache (LRU + embedding similarity) | ✅ |
+| 4 | Adaptive query router | 🚧 |
 | 5 | HNSW tuning, cross-encoder reranking | ⏳ |
 | 6 | MCP server + client integration | ⏳ |
 | 7 | Light knowledge graph (entity extraction + linking) | ⏳ |
@@ -174,54 +191,40 @@ pareto stats --show-questions      # include question text in tables
 ## Design Principles
 
 1. **Data-driven engineering.** Every optimization layer must beat the previous benchmark on at least one metric or it doesn't ship.
-2. **Pragmatic ground truth.** Source-level + keyword-level labels in YAML. Authorable in an afternoon, robust enough to drive meaningful evals.
-3. **Idempotent everything.** Document and chunk IDs are deterministic. Re-running a pipeline on unchanged data is free.
-4. **Model-agnostic by default.** Local-first (Ollama) for the development loop; LiteLLM wrapper lets you swap to OpenAI/Anthropic/Cohere with a single config change.
-5. **Cost is a first-class field.** Every LLM call carries token, cost, and latency metadata. Production cost reports are not bolted on later — they're emitted from day one and persisted to SQLite.
-6. **Retriever-agnostic pipeline.** NaiveRAG accepts any `search(query, k) -> list[Hit]` implementation. Strategy pattern, drop-in retrievers from Week 4 onwards.
-7. **Failure-safe observability.** Telemetry never breaks the user's request. Two-layer try/except, stderr fallback.
+2. **Quality is non-negotiable.** A cost cut that degrades answers isn't a win. Cache reports a quality-adjusted hit rate; false hits are counted as regressions, not savings.
+3. **Idempotent everything.** Document and chunk IDs are deterministic. This powers free re-indexing *and* automatic cache invalidation.
+4. **Pragmatic ground truth.** Source-level + keyword-level labels in YAML.
+5. **Model-agnostic by default.** Local-first (Ollama); LiteLLM swaps to OpenAI/Anthropic/Cohere with one config change.
+6. **Cost is a first-class field.** Every call carries token, cost, and latency metadata, persisted to SQLite. Phantom cost (what cache hits *didn't* pay) is tracked for savings projection.
+7. **Retriever-agnostic pipeline.** NaiveRAG accepts any `search(query, k) -> list[Hit]` implementation.
+8. **Failure-safe everything.** Telemetry never breaks a request; cache failures fall through to the LLM; cache loading degrades gracefully on corruption.
 
 ## Project Structure
 
 ```
 pareto/
-├── ingestion/       # 5-format document readers (PDF, DOCX, MD, HTML, TXT)
+├── ingestion/       # 5-format document readers
 ├── chunking/        # Hierarchical chunker with tree visualization
-├── indexing/        # Embedder + FAISS HNSW vector store + indexer pipeline
+├── indexing/        # Embedder + FAISS HNSW + indexer pipeline
 ├── retrieval/       # Dense, BM25, RRF, HybridRetriever
-├── rag/             # NaiveRAG pipeline (retriever-agnostic)
+├── cache/           # LRUCache + SemanticCache (embedding similarity)
+├── rag/             # NaiveRAG pipeline (retriever- and cache-aware)
 ├── generation/      # LiteLLM client wrapper with cost tracking
 ├── benchmark/       # Test sets, metrics, runner, reports
-├── observability/   # SQLite query log + aggregation
+├── observability/   # SQLite query log + cache stats + savings
 ├── api/             # FastAPI HTTP server
-└── cli.py           # 9 commands
+└── cli.py           # 8 commands
 
 benchmarks/
 ├── corpus/          # 13 sample documents (legal/finance/health, EN+TR)
-├── queries/         # 30-query YAML test set
+├── queries/         # 30-query test set + 45-query cache test set
 └── results/         # Baseline JSON reports
 
-frontend/            # Next.js chat UI
-
 docs/
-├── RETRO_WEEK_1.md  # Week 1 retrospective
-└── RETRO_WEEK_2.md  # Week 2 retrospective
-```
-
-## Development
-
-```bash
-# Run smoke tests
-python -m pytest tests/
-
-# Format
-ruff format .
-
-# Lint
-ruff check .
-
-# Compare retrievers side-by-side
-python scripts/compare_retrievers.py
+├── RETRO_WEEK_1.md
+├── RETRO_WEEK_2.md
+├── RETRO_WEEK_3.md
+└── COST_PROJECTION.md
 ```
 
 ## License
@@ -232,14 +235,6 @@ MIT — see [LICENSE](./LICENSE).
 
 Built as part of the Istanbul Medeniyet University TeknoKampus AI specialization program.
 
-Sample corpus includes:
-- **GDPR** full text from [gdpr-info.eu](https://gdpr-info.eu) (public domain)
-- **Basel III** summary from [bis.org](https://www.bis.org/bcbs/basel3.htm) (public)
-- **CDC Hypertension** factsheet (public)
-- **WHO Diabetes** factsheet (public)
-- **MIT License** and **Apache 2.0 License** texts (public)
-- **KVKK** (Turkish data protection law) from [tr.wikipedia.org](https://tr.wikipedia.org) (CC-BY-SA)
-- **Hipertansiyon** article from [tr.wikipedia.org](https://tr.wikipedia.org) (CC-BY-SA)
-- Synthetic legal, earnings, and clinical documents for chunker testing.
+Sample corpus includes public-domain and openly-licensed sources: GDPR full text ([gdpr-info.eu](https://gdpr-info.eu)), Basel III summary ([bis.org](https://www.bis.org)), CDC/WHO health factsheets, MIT and Apache 2.0 license texts, and KVKK + Hipertansiyon articles from [tr.wikipedia.org](https://tr.wikipedia.org) (CC-BY-SA). Synthetic legal, earnings, and clinical documents for testing.
 
 If Pareto helps you ship cheaper RAG, [open an issue](https://github.com/Engineer-coding/pareto/issues) and tell me what you'd improve.
