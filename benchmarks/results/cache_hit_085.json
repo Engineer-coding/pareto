@@ -1,0 +1,1237 @@
+{
+  "system_name": "cache_hit_085",
+  "test_set_name": "queries_with_dupes",
+  "timestamp": "2026-06-03T09:24:26.245663Z",
+  "num_queries": 45,
+  "k": 4,
+  "avg_hit_at_k": 0.2682926829268293,
+  "avg_precision_at_k": 0.18902439024390244,
+  "avg_recall_at_k": 0.2682926829268293,
+  "avg_mrr": 0.2682926829268293,
+  "avg_retrieval_latency_ms": 11.75609756097561,
+  "answer_evaluated": true,
+  "avg_keyword_coverage": 0.6341463414634148,
+  "avg_prompt_tokens": 606.2,
+  "avg_completion_tokens": 96.28888888888889,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 14888.8,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 14.0,
+      "hit_at_k": 0.21428571428571427,
+      "precision_at_k": 0.17857142857142858,
+      "recall_at_k": 0.21428571428571427,
+      "mrr": 0.21428571428571427
+    },
+    "finance": {
+      "n": 13.0,
+      "hit_at_k": 0.38461538461538464,
+      "precision_at_k": 0.23076923076923078,
+      "recall_at_k": 0.38461538461538464,
+      "mrr": 0.38461538461538464
+    },
+    "health": {
+      "n": 14.0,
+      "hit_at_k": 0.21428571428571427,
+      "precision_at_k": 0.16071428571428573,
+      "recall_at_k": 0.21428571428571427,
+      "mrr": 0.21428571428571427
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 34
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 68936
+      },
+      "total_latency_ms": 69035
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 55
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 43
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 55
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 55
+    },
+    {
+      "query_id": "legal-006",
+      "query": "Does GDPR apply to companies outside the European Union?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 52
+    },
+    {
+      "query_id": "legal-007",
+      "query": "What permissions does the Apache 2.0 license grant?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "The Apache 2.0 license grants the following permissions:\n\n* You may use, reproduce, and distribute the software (as long as you comply with the terms of the license).\n* You are allowed to modify the source code and create derivative works.\n* You may distribute the software under the same license that it was originally distributed under.\n\nThese permissions are granted \"AS IS\" without warranties or conditions of any kind. [2]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 58
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 427,
+        "prompt_tokens": 476,
+        "completion_tokens": 87,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 43109
+      },
+      "total_latency_ms": 43222
+    },
+    {
+      "query_id": "legal-008",
+      "query": "What are the redistribution conditions under Apache 2.0?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The Apache 2.0 license grants the following permissions:\n\n* You may use, reproduce, and distribute the software (as long as you comply with the terms of the license).\n* You are allowed to modify the source code and create derivative works.\n* You may distribute the software under the same license that it was originally distributed under.\n\nThese permissions are granted \"AS IS\" without warranties or conditions of any kind. [2]",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.3333333333333333,
+        "answer_length_chars": 427,
+        "prompt_tokens": 476,
+        "completion_tokens": 87,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 64
+    },
+    {
+      "query_id": "legal-009",
+      "query": "What does the synthetic contract say about obligations?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_contract.md",
+        "synthetic_contract.md",
+        "apache_2_license.txt",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to [1], the party agrees to perform the following obligations under this agreement, which have their own subsections with detailed terms. However, the specific details of these obligations are not provided in the given context.\n\nThe context does not provide enough information to answer the question about what the synthetic contract says about obligations.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 53
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 367,
+        "prompt_tokens": 501,
+        "completion_tokens": 64,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 45826
+      },
+      "total_latency_ms": 45933
+    },
+    {
+      "query_id": "legal-010",
+      "query": "What is the fine amount in the Acme Corp 2023 data breach ruling?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "I don't have enough information to answer your question about the fine amount in the Acme Corp 2023 data breach ruling. The provided context only includes the General Data Protection Regulation (GDPR) text and does not mention any specific case or ruling, including Acme Corp.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 51
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 276,
+        "prompt_tokens": 623,
+        "completion_tokens": 57,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 53876
+      },
+      "total_latency_ms": 53983
+    },
+    {
+      "query_id": "finance-001",
+      "query": "What is Basel III?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 40
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 55109
+      },
+      "total_latency_ms": 55195
+    },
+    {
+      "query_id": "finance-002",
+      "query": "When were the Basel III reforms endorsed?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 55
+    },
+    {
+      "query_id": "finance-003",
+      "query": "What is the Liquidity Coverage Ratio in Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 51
+    },
+    {
+      "query_id": "finance-004",
+      "query": "What is the Net Stable Funding Ratio?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "kvkk_tr_wikipedia.html",
+        "synthetic_earnings.md",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": "The Net Stable Funding Ratio (NSFR) is a regulatory metric that measures a bank's ability to meet its short-term funding needs. It was introduced by Basel III as a way to assess a bank's resilience and stability.\n\nAccording to [1], the NSFR is calculated as the ratio of stable net cash inflows from operating activities, minus stable net outflows from operating activities, divided by total stable funding requirements. The metric aims to capture a bank's ability to generate sufficient funds to meet its short-term obligations.\n\nThe NSFR was introduced in 2014 and became effective for banks with total assets over $250 billion [1].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 49
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 634,
+        "prompt_tokens": 637,
+        "completion_tokens": 129,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 60776
+      },
+      "total_latency_ms": 60871
+    },
+    {
+      "query_id": "finance-005",
+      "query": "Summarize the main goals of Basel III reforms",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 48
+    },
+    {
+      "query_id": "finance-006",
+      "query": "What was the Q4 revenue growth in the earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "synthetic_earnings.md",
+        "gdpr_full_text.html",
+        "basel3_summary.html"
+      ],
+      "answer": "According to [1], Revenue grew 18 percent year over year in Q4.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 47
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 63,
+        "prompt_tokens": 435,
+        "completion_tokens": 18,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 27783
+      },
+      "total_latency_ms": 27873
+    },
+    {
+      "query_id": "finance-007",
+      "query": "How did cloud services perform in the Q4 earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to [1], Revenue grew 18 percent year over year in Q4.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 63,
+        "prompt_tokens": 435,
+        "completion_tokens": 18,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 67
+    },
+    {
+      "query_id": "finance-008",
+      "query": "Why did hardware sales decline?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "basel3_summary.html",
+        "cdc_hypertension.html",
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": "According to the context, [1] states that \"Hardware sales declined slightly due to supply constraints.\" This is the only information provided about the reason for the decline in hardware sales. There is no additional information available from the other sources.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 51
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 262,
+        "prompt_tokens": 687,
+        "completion_tokens": 48,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 54553
+      },
+      "total_latency_ms": 54656
+    },
+    {
+      "query_id": "finance-009",
+      "query": "What is the current Bank of America stock price today?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "I don't have access to real-time market data or current information on specific company stocks, including Bank of America's stock price. The provided context only discusses Basel III reforms and does not include any information about financial markets or current stock prices.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 63
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 276,
+        "prompt_tokens": 628,
+        "completion_tokens": 49,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 48759
+      },
+      "total_latency_ms": 48886
+    },
+    {
+      "query_id": "finance-010",
+      "query": "What is the projected revenue for 2026 according to Acme's forecast?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [],
+      "answer": "I don't have enough information to answer your question about the fine amount in the Acme Corp 2023 data breach ruling. The provided context only includes the General Data Protection Regulation (GDPR) text and does not mention any specific case or ruling, including Acme Corp.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 276,
+        "prompt_tokens": 623,
+        "completion_tokens": 57,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 41
+    },
+    {
+      "query_id": "health-001",
+      "query": "What is considered high blood pressure?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 38
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 46170
+      },
+      "total_latency_ms": 46248
+    },
+    {
+      "query_id": "health-002",
+      "query": "What are the symptoms of high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 36
+    },
+    {
+      "query_id": "health-003",
+      "query": "What organs can high blood pressure damage?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 41
+    },
+    {
+      "query_id": "health-004",
+      "query": "How is blood pressure measured?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 39
+    },
+    {
+      "query_id": "health-005",
+      "query": "What is diabetes?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 43
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 66659
+      },
+      "total_latency_ms": 66737
+    },
+    {
+      "query_id": "health-006",
+      "query": "What are the main types of diabetes?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 38
+    },
+    {
+      "query_id": "health-007",
+      "query": "What complications can diabetes cause?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 37
+    },
+    {
+      "query_id": "health-008",
+      "query": "How many participants were in the clinical study?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": "According to [1], a study examined patient outcomes across 1200 participants.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 33
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 77,
+        "prompt_tokens": 788,
+        "completion_tokens": 17,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 49856
+      },
+      "total_latency_ms": 49927
+    },
+    {
+      "query_id": "health-009",
+      "query": "What study design was used in the clinical study?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to [1], a study examined patient outcomes across 1200 participants.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 77,
+        "prompt_tokens": 788,
+        "completion_tokens": 17,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "health-010",
+      "query": "What is the discovered cure for type 1 diabetes from 2025?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "dupe-001",
+      "query": "Explain GDPR in simple terms",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "dupe-002",
+      "query": "What are the fundamental principles of the General Data Protection Regulation?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "dupe-003",
+      "query": "Tell me about data subject rights in GDPR",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 32
+    },
+    {
+      "query_id": "dupe-004",
+      "query": "Who is the data protection officer and what do they do?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 37
+    },
+    {
+      "query_id": "dupe-005",
+      "query": "GDPR'ı kısaca açıklayın",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy in the European Union and the European Economic Area. It came into effect on May 25, [2] (source: gdpr_full_text.html). The GDPR aims to strengthen and unify data protection for all individuals within the EU.\n\nIt regulates how organizations can collect, store, and use personal data of EU residents. The regulation also provides individuals with rights such as access to their personal data, right to erasure, and right to be informed about how their data is being used.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 573,
+        "prompt_tokens": 613,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 32
+    },
+    {
+      "query_id": "dupe-006",
+      "query": "Explain Basel III in a few sentences",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 30
+    },
+    {
+      "query_id": "dupe-007",
+      "query": "What is the LCR requirement in banking?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "The Liquidity Coverage Ratio (LCR) is a liquidity standard that requires banks to hold high-quality liquid assets to meet their short-term liquidity needs. According to Basel III, banks must hold at least 60% of their total net cash outflows from securitisation activities in unsecured funding over a 30-day period.\n\n[1] The LCR requirement was introduced as part of the Basel III reforms in January 2013, with the aim of improving banks' ability to withstand liquidity shocks.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 36
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 477,
+        "prompt_tokens": 626,
+        "completion_tokens": 103,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 48584
+      },
+      "total_latency_ms": 48653
+    },
+    {
+      "query_id": "dupe-008",
+      "query": "What are the main objectives behind Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms are minimum requirements that apply to internationally active banks, with members committed to implementing and applying standards in their jurisdictions within a specified time frame. [1]\n\nBasel III is part of the consolidated Basel Framework, which comprises all current and forthcoming standards of the Basel Committee on Banking Supervision.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 601,
+        "prompt_tokens": 565,
+        "completion_tokens": 109,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "dupe-009",
+      "query": "How much did revenue grow in Q4?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to [1], Revenue grew 18 percent year over year in Q4.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 63,
+        "prompt_tokens": 435,
+        "completion_tokens": 18,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 34
+    },
+    {
+      "query_id": "dupe-010",
+      "query": "What caused the hardware sales drop?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the context, [1] states that \"Hardware sales declined slightly due to supply constraints.\" This is the only information provided about the reason for the decline in hardware sales. There is no additional information available from the other sources.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 262,
+        "prompt_tokens": 687,
+        "completion_tokens": 48,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 30
+    },
+    {
+      "query_id": "dupe-011",
+      "query": "What warning signs come with high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 33
+    },
+    {
+      "query_id": "dupe-012",
+      "query": "Which body organs are at risk from hypertension?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), [1], high blood pressure is consistently at or above 130/80 mm Hg. This is the definition of high blood pressure, also known as hypertension.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 208,
+        "prompt_tokens": 624,
+        "completion_tokens": 46,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 35
+    },
+    {
+      "query_id": "dupe-013",
+      "query": "Tell me about diabetes",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 30
+    },
+    {
+      "query_id": "dupe-014",
+      "query": "Which types of diabetes exist?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 31
+    },
+    {
+      "query_id": "dupe-015",
+      "query": "Which long-term problems does diabetes lead to?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [],
+      "answer": "Diabetes is a medical condition characterized by high levels of glucose (sugar) in the blood. According to [3], symptoms of diabetes may include feeling very thirsty, needing to urinate more often than usual, blurred vision, and feeling tired. These symptoms can be mild and may take many years to be noticed in type 2 diabetes.\n\nDiabetes is not just a matter of personal choice or lifestyle, but rather a serious health condition that requires medical attention. [1] states that diabetes causes blindness, kidney failure, heart attacks, stroke, and lower limb amputation if left untreated or poorly managed.\n\nIt's worth noting that there are different types of diabetes, with type 2 being the most common form, accounting for over 95% of cases. Gestational diabetes is a type of diabetes that occurs during pregnancy, while other forms of diabetes may be diagnosed later in life after complications have already arisen.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 0
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 920,
+        "prompt_tokens": 651,
+        "completion_tokens": 184,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 0
+      },
+      "total_latency_ms": 34
+    }
+  ],
+  "extra": {
+    "refusal_accuracy": 0.75
+  }
+}
