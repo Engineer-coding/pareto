@@ -328,9 +328,14 @@ def ask(
         help="LiteLLM model identifier.",
     ),
     top_k: int = typer.Option(5, "--top-k", "-k"),
+    
     retriever: str = typer.Option(
         "hybrid", "--retriever", "-r",
         help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
+    ),
+    use_router: bool = typer.Option(
+        False, "--router",
+        help="Use the adaptive query router (overrides --retriever).",
     ),
     no_cache: bool = typer.Option(
         False, "--no-cache",
@@ -366,30 +371,11 @@ def ask(
     indexer = Indexer.load(index_dir)
     console.print(f"  → {indexer.store.size} chunks")
 
-    # Build retriever
-    if retriever == "dense":
-        from pareto.retrieval import DenseRetriever
-        retriever_obj = DenseRetriever(indexer)
-    elif retriever == "bm25":
-        from pareto.retrieval import BM25Ranker
-        ranker = BM25Ranker()
-        ranker.build_from_records(indexer.store.records)
-        retriever_obj = ranker
-    elif retriever == "hybrid":
-        from pareto.retrieval import BM25Ranker, HybridRetriever
-        ranker = BM25Ranker()
-        ranker.build_from_records(indexer.store.records)
-        retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
-    else:
-        console.print(f"[red]Unknown retriever:[/red] {retriever}")
-        raise typer.Exit(1)
-
-    # Load or create cache (unless --no-cache)
+    # Load or create cache (shared by both paths, unless --no-cache)
     cache = None
     if not no_cache:
         if cache_path.exists():
             cache = SemanticCache.load(cache_path)
-            # Override threshold/capacity at runtime if user passed flags
             cache.threshold = cache_threshold
         else:
             cache = SemanticCache(
@@ -397,21 +383,69 @@ def ask(
                 threshold=cache_threshold,
             )
 
-    # Build LLM + log store + RAG
+    from pareto.observability import QueryLogStore
     log_store = QueryLogStore()
     llm = LiteLLMClient(LLMConfig(model=model))
-    rag = NaiveRAG(
-        retriever=retriever_obj,
-        llm=llm,
-        top_k=top_k,
-        log_store=log_store,
-        cache=cache,
-    )
+
+    if use_router:
+        # Adaptive router: build all three retrievers + route per query
+        from pareto.retrieval import DenseRetriever, BM25Ranker, HybridRetriever
+        from pareto.routing import QueryRouter
+        from pareto.rag import RoutedRAG
+
+        ranker = BM25Ranker()
+        ranker.build_from_records(indexer.store.records)
+        retrievers = {
+            "dense": DenseRetriever(indexer),
+            "bm25": ranker,
+            "hybrid": HybridRetriever(indexer=indexer, bm25_ranker=ranker),
+        }
+        rag = RoutedRAG(
+            retrievers=retrievers,
+            router=QueryRouter(),
+            llm=llm,
+            top_k=top_k,
+            cache=cache,
+            log_store=log_store,
+        )
+    else:
+        # Fixed retriever (existing behavior)
+        if retriever == "dense":
+            from pareto.retrieval import DenseRetriever
+            retriever_obj = DenseRetriever(indexer)
+        elif retriever == "bm25":
+            from pareto.retrieval import BM25Ranker
+            ranker = BM25Ranker()
+            ranker.build_from_records(indexer.store.records)
+            retriever_obj = ranker
+        elif retriever == "hybrid":
+            from pareto.retrieval import BM25Ranker, HybridRetriever
+            ranker = BM25Ranker()
+            ranker.build_from_records(indexer.store.records)
+            retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
+        else:
+            console.print(f"[red]Unknown retriever:[/red] {retriever}")
+            raise typer.Exit(1)
+        rag = NaiveRAG(
+            retriever=retriever_obj,
+            llm=llm,
+            top_k=top_k,
+            log_store=log_store,
+            cache=cache,
+        )
 
     # Run the query
     console.print(f"Q: [bold]{question}[/bold]")
     console.print(f"Thinking with {model}...")
     response = rag.query(question)
+
+    # Routing indicator (if the router was used)
+    if response.extra.get("route"):
+        console.print(
+            f"\n[bold magenta]🧭 Routed to {response.extra['route']}[/bold magenta] "
+            f"([dim]{response.extra['route_reason']}, "
+            f"tier={response.extra.get('model_tier', 'standard')}[/dim])"
+        )
 
     # Display cache status FIRST if hit (most exciting line)
     if response.extra.get("cache_hit"):
@@ -501,6 +535,15 @@ def benchmark(
         "--retriever", "-r",
         help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
     ),
+
+    no_cache: bool = typer.Option(
+        False, "--no-cache",
+        help="Disable the semantic cache during the benchmark.",
+    ),
+    cache_threshold: float = typer.Option(
+        0.92, "--cache-threshold",
+        help="Cosine similarity threshold for cache hits (end_to_end only).",
+    ),
 ) -> None:
     """Run a benchmark of a Pareto system against the test set."""
     if not index_dir.exists():
@@ -538,36 +581,28 @@ def benchmark(
         console.print(f"[red]Unknown retriever:[/red] {retriever}")
         raise typer.Exit(1)
 
-    # Build the requested retriever
-    if retriever == "dense":
-        from pareto.retrieval import DenseRetriever
-        retriever_obj = DenseRetriever(indexer)
-    elif retriever == "bm25":
-        from pareto.retrieval import BM25Ranker
-        ranker = BM25Ranker()
-        ranker.build_from_records(indexer.store.records)
-        retriever_obj = ranker
-    elif retriever == "hybrid":
-        from pareto.retrieval import BM25Ranker, HybridRetriever
-        ranker = BM25Ranker()
-        ranker.build_from_records(indexer.store.records)
-        retriever_obj = HybridRetriever(indexer=indexer, bm25_ranker=ranker)
-    else:
-        console.print(f"[red]Unknown retriever:[/red] {retriever}")
-        raise typer.Exit(1)
-
     # Runner setup
     rag = None
+    cache = None
     if mode == "end_to_end":
+        if not no_cache:
+            from pareto.cache import SemanticCache
+            cache = SemanticCache(threshold=cache_threshold)
         rag = NaiveRAG(
             retriever=retriever_obj,
             llm=LiteLLMClient(LLMConfig(model=model)),
             top_k=k,
+            cache=cache,
         )
         if limit is None:
             console.print(
                 "[yellow]Warning:[/yellow] end-to-end mode without --limit will run "
                 f"all {len(test_set)} queries through the LLM. This can take 15-30 minutes on CPU."
+            )
+        if cache is not None:
+            console.print(
+                f"[dim]Semantic cache enabled (threshold={cache_threshold}). "
+                f"Paraphrase queries may hit the cache and skip the LLM.[/dim]"
             )
     runner = BenchmarkRunner(indexer=indexer, rag=rag, retriever=retriever_obj)
 
@@ -649,6 +684,21 @@ def benchmark(
     saved = save_report(report, output)
     console.print(f"\n[green]Report saved:[/green] {saved}")
 
+    # ── cache stats (end-to-end with cache) ──────────────────────────────
+    if cache is not None:
+        cstats = cache.stats()
+        ct = Table(title="Cache Stats")
+        ct.add_column("Metric")
+        ct.add_column("Value", justify="right")
+        ct.add_row("Cache size", f"{cstats['size']:,}")
+        ct.add_row("Hits", f"{cstats['hits']:,}")
+        ct.add_row("Misses", f"{cstats['misses']:,}")
+        ct.add_row("[bold cyan]Hit rate[/bold cyan]",
+                   f"[bold cyan]{cstats['hit_rate']:.1%}[/bold cyan]")
+        ct.add_row("Threshold", f"{cstats['threshold']}")
+        console.print()
+        console.print(ct)
+
 @app.command()
 def serve(
     index_dir: Path = typer.Option(
@@ -692,6 +742,10 @@ def stats(
     by: str | None = typer.Option(
         None, "--by",
         help="Group aggregate by: 'model' or 'retriever'.",
+    ),
+    use_router: bool = typer.Option(
+        False, "--router",
+        help="Use the adaptive query router (overrides --retriever).",
     ),
     slow: int | None = typer.Option(
         None, "--slow",
