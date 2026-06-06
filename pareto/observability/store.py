@@ -70,6 +70,18 @@ _V2_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_queries_cache_hit ON queries(cache_hit)",
 ]
 
+# ── v3 additions (Week 4: routing) ─────────────────────────────────────────
+
+_V3_COLUMNS = [
+    ("route",        "TEXT"),
+    ("route_reason", "TEXT"),
+    ("model_tier",   "TEXT"),
+]
+
+_V3_INDEXES = [
+    "CREATE INDEX IF NOT EXISTS idx_queries_route ON queries(route)",
+]
+
 
 # ── config ───────────────────────────────────────────────────────────────
 
@@ -119,6 +131,12 @@ class QueryLogStore:
                     conn.execute(f"ALTER TABLE queries ADD COLUMN {col_name} {col_def}")
             for idx_sql in _V2_INDEXES:
                 conn.execute(idx_sql)
+            
+            for col_name, col_def in _V3_COLUMNS:
+                if col_name not in existing:
+                    conn.execute(f"ALTER TABLE queries ADD COLUMN {col_name} {col_def}")
+            for idx_sql in _V3_INDEXES:
+                conn.execute(idx_sql)
 
     # ── write ─────────────────────────────────────────────────────────────
     def log(
@@ -139,6 +157,10 @@ class QueryLogStore:
             cache_hit = bool(response.extra.get("cache_hit", False))
             cache_similarity = response.extra.get("cache_similarity")
 
+            route = response.extra.get("route")
+            route_reason = response.extra.get("route_reason")
+            model_tier = response.extra.get("model_tier")
+
             with self._connection() as conn:
                 cursor = conn.execute(
                     """
@@ -147,8 +169,8 @@ class QueryLogStore:
                         citations_json, prompt_tokens, completion_tokens,
                         total_tokens, cost_usd, retrieval_latency_ms,
                         generation_latency_ms, total_latency_ms, extra_json,
-                        cache_hit, cache_similarity
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        cache_hit, cache_similarity, route, route_reason, model_tier
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         datetime.now(timezone.utc).isoformat(),
@@ -169,6 +191,9 @@ class QueryLogStore:
                             if response.extra else None,
                         1 if cache_hit else 0,
                         float(cache_similarity) if cache_similarity is not None else None,
+                        route,
+                        route_reason,
+                        model_tier,
                     ),
                 )
                 return cursor.lastrowid
@@ -286,9 +311,9 @@ class QueryLogStore:
             stats["cache_hit_rate"] = self._compute_hit_rate(stats)
             return {"overall": stats}
 
-        if group_by not in {"model", "retriever", "cache_hit"}:
+        if group_by not in {"model", "retriever", "cache_hit", "route"}:
             raise ValueError(
-                f"group_by must be 'model', 'retriever', or 'cache_hit', got {group_by!r}"
+                f"group_by must be 'model', 'retriever', 'cache_hit', or 'route', got {group_by!r}"
             )
 
         sql = f"SELECT {group_by}, {metric_cols} FROM queries{where} GROUP BY {group_by}"
