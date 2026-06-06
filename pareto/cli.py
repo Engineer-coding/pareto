@@ -337,6 +337,10 @@ def ask(
         False, "--router",
         help="Use the adaptive query router (overrides --retriever).",
     ),
+    small_model: str = typer.Option(
+        "ollama/llama3.2:1b", "--small-model",
+        help="Model for small-tier (simple) queries when --router is on.",
+    ),
     no_cache: bool = typer.Option(
         False, "--no-cache",
         help="Bypass the semantic cache for this query.",
@@ -388,7 +392,7 @@ def ask(
     llm = LiteLLMClient(LLMConfig(model=model))
 
     if use_router:
-        # Adaptive router: build all three retrievers + route per query
+        # Adaptive router: build all three retrievers + model tiering
         from pareto.retrieval import DenseRetriever, BM25Ranker, HybridRetriever
         from pareto.routing import QueryRouter
         from pareto.rag import RoutedRAG
@@ -400,10 +404,12 @@ def ask(
             "bm25": ranker,
             "hybrid": HybridRetriever(indexer=indexer, bm25_ranker=ranker),
         }
+        llm_small = LiteLLMClient(LLMConfig(model=small_model))
         rag = RoutedRAG(
             retrievers=retrievers,
             router=QueryRouter(),
             llm=llm,
+            llm_small=llm_small,
             top_k=top_k,
             cache=cache,
             log_store=log_store,
@@ -436,7 +442,10 @@ def ask(
 
     # Run the query
     console.print(f"Q: [bold]{question}[/bold]")
-    console.print(f"Thinking with {model}...")
+    if use_router:
+        console.print("Thinking (router selecting retriever + model)...")
+    else:
+        console.print(f"Thinking with {model}...")
     response = rag.query(question)
 
     # Routing indicator (if the router was used)
@@ -481,9 +490,11 @@ def ask(
             f"saved ~{orig_lat:,}ms + ${orig_cost:.5f}[/dim]"
         )
     else:
+        model_short = (response.model or "").replace("ollama/", "")
         console.print(
             f"\n[dim]Stats: {response.total_tokens} tokens "
             f"(prompt={response.prompt_tokens}, completion={response.completion_tokens}) "
+            f"| model={model_short} "
             f"| retrieval={response.retrieval_latency_ms}ms "
             f"| generation={response.generation_latency_ms}ms "
             f"| total={response.total_latency_ms}ms "

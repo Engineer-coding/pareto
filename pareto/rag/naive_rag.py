@@ -84,7 +84,7 @@ class NaiveRAG:
         self.cache = cache
 
     # ── public API ────────────────────────────────────────────────────────
-    def query(self, question: str, top_k: int | None = None, retriever=None) -> RAGResponse:
+    def query(self, question: str, top_k: int | None = None, retriever=None, llm=None) -> RAGResponse:
         """
         Run the full RAG pipeline for a single question.
 
@@ -100,6 +100,7 @@ class NaiveRAG:
         t0 = time.perf_counter()
         active_retriever = retriever if retriever is not None else self.retriever
         retriever_name = type(active_retriever).__name__
+        active_llm = llm if llm is not None else self.llm
 
         # ── 1. Embed query (cache lookup + retrieval share it) ──
         query_embedding = None
@@ -118,7 +119,7 @@ class NaiveRAG:
                     query_embedding=query_embedding,
                     retriever=retriever_name,
                     top_k=k,
-                    model=self.llm.model_name,
+                    model=active_llm.model_name,
                     valid_chunk_ids=None,
                 )
             except Exception as e:
@@ -140,7 +141,7 @@ class NaiveRAG:
 
         # ── 5. Generation ──
         t_gen_start = time.perf_counter()
-        llm_resp = self.llm.generate(
+        llm_resp = active_llm.generate(
             [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": user_prompt},

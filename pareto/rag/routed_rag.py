@@ -1,18 +1,19 @@
 """
-RoutedRAG — orchestrates QueryRouter + multiple retrievers over NaiveRAG.
+RoutedRAG — orchestrates QueryRouter + multiple retrievers + model tiering
+over NaiveRAG.
 
 Flow:
-    Query → Router (pick retriever) → NaiveRAG (cache-aware, uses the
-    picked retriever) → response, annotated with routing metadata.
+    Query → Router → (retriever, model_tier) → NaiveRAG (cache-aware, uses
+    the picked retriever AND picked model) → response + routing metadata.
 
-The router runs BEFORE cache lookup because the cache key includes the
-retriever — we must know which retriever was chosen to find the right
-cache entry. The router is deterministic, so the same query always routes
-to the same retriever, keeping cache lookups consistent.
+Two LLM clients:
+    - standard: the full model (e.g. llama3.2:3b) for complex queries
+    - small:    a cheaper/faster model (e.g. llama3.2:1b) for short,
+                factual queries the router deems simple
 
-This is a thin orchestration layer. NaiveRAG stays focused on the
-retrieve→generate→cache pipeline; RoutedRAG only decides which retriever
-to hand it per query.
+The router runs before cache lookup because the cache key includes both
+retriever and model. Deterministic routing keeps cache lookups consistent.
+If no small model is provided, small-tier queries fall back to standard.
 """
 
 from __future__ import annotations
@@ -23,13 +24,14 @@ from pareto.routing import QueryRouter
 
 
 class RoutedRAG:
-    """Router + retriever registry over a single NaiveRAG."""
+    """Router + retriever registry + model tiering over a single NaiveRAG."""
 
     def __init__(
         self,
         retrievers: dict,           # {"dense": ..., "bm25": ..., "hybrid": ...}
         router: QueryRouter,
-        llm=None,
+        llm=None,                   # standard-tier LLM client
+        llm_small=None,             # small-tier LLM client (optional)
         top_k: int = 5,
         cache=None,
         log_store=None,
@@ -43,8 +45,11 @@ class RoutedRAG:
         self.retrievers = retrievers
         self.router = router
         self.default_retriever = default_retriever
-        # Single NaiveRAG; we override its retriever per query.
-        # Pass an indexer-bearing retriever so cache embedding works.
+        self.llm_standard = llm
+        # Fall back to standard if no small model — tiering becomes a no-op
+        self.llm_small = llm_small if llm_small is not None else llm
+
+        # Single NaiveRAG; we override retriever + llm per query.
         self.rag = NaiveRAG(
             retriever=retrievers[default_retriever],
             llm=llm,
@@ -55,12 +60,21 @@ class RoutedRAG:
 
     def query(self, question: str, top_k: int | None = None) -> RAGResponse:
         decision = self.router.route(question)
-        active = self.retrievers.get(decision.retriever)
-        if active is None:
-            # Router picked something we don't have; fall back to default.
-            active = self.retrievers[self.default_retriever]
 
-        response = self.rag.query(question, top_k=top_k, retriever=active)
+        active_retriever = self.retrievers.get(decision.retriever)
+        if active_retriever is None:
+            active_retriever = self.retrievers[self.default_retriever]
+
+        active_llm = (
+            self.llm_small if decision.model_tier == "small" else self.llm_standard
+        )
+
+        response = self.rag.query(
+            question,
+            top_k=top_k,
+            retriever=active_retriever,
+            llm=active_llm,
+        )
 
         # Annotate with routing metadata (merge into existing extra)
         response.extra["route"] = decision.retriever
@@ -69,7 +83,10 @@ class RoutedRAG:
         return response
 
     def __repr__(self) -> str:
+        small = getattr(self.llm_small, "model_name", "none")
+        standard = getattr(self.llm_standard, "model_name", "none")
         return (
             f"RoutedRAG(retrievers={list(self.retrievers.keys())}, "
-            f"default={self.default_retriever}, router={self.router})"
+            f"default={self.default_retriever}, "
+            f"standard={standard}, small={small})"
         )
