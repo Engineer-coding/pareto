@@ -38,9 +38,22 @@ class QueryRouter:
 
     def __init__(
         self,
-        no_answer_threshold: float = 0.5,
+        no_answer_threshold: float = 0.4,
         small_model_max_tokens: int = 8,
     ):
+        """
+        Args:
+            no_answer_threshold: no_answer_score at/above which a query
+                routes to BM25 for refusal safety. Default 0.40, chosen via
+                Week 4 tuning (scripts/tune_router.py): 0.40 catches 3/4
+                NO_ANSWER queries (vs 2/4 at 0.50) with ZERO false positives
+                on the test set. Below 0.40 gives no further gain — the last
+                NO_ANSWER query (legal-010, score 0.00) is normal-looking
+                and uncatchable by a text heuristic; it needs a
+                post-retrieval signal. Routing recall improved here;
+                refusal-accuracy impact still pending an LLM benchmark re-run.
+            small_model_max_tokens: max query length for small-tier routing.
+        """
         self.no_answer_threshold = no_answer_threshold
         self.small_model_max_tokens = small_model_max_tokens
 
