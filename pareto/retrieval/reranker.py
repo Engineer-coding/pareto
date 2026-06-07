@@ -6,10 +6,13 @@ Stage 2 (this) re-scores each (query, candidate) pair jointly with a
 cross-encoder — slower but more accurate than bi-encoder cosine, because
 the model sees query and document together.
 
-Side benefit (Week 5 thesis): if the top rerank score is low, no candidate
-truly matches the query — a post-retrieval NO_ANSWER signal that the
-pre-retrieval router (Week 4) cannot produce. This directly targets the
-legal-010 case the router could not catch.
+Score thresholding (Week 5): rerank() can drop candidates below a score
+cutoff. Two effects with one mechanism:
+  1. Garbage filtering — irrelevant candidates (negative scores) never
+     reach the LLM context.
+  2. NO_ANSWER signal — if NO candidate clears the threshold, the corpus
+     has nothing relevant; the empty result is a post-retrieval NO_ANSWER
+     signal the pre-retrieval router (Week 4) could not produce.
 
 Multilingual model (mmarco-mMiniLMv2) so Turkish queries rerank correctly.
 """
@@ -54,9 +57,25 @@ class CrossEncoderReranker:
         scores = self.model.predict(pairs)
         return [float(s) for s in scores]
 
-    def rerank(self, query: str, hits: list, top_k: int = 5) -> list[RerankedHit]:
+    def rerank(
+        self,
+        query: str,
+        hits: list,
+        top_k: int = 5,
+        score_threshold: float | None = None,
+        min_keep: int = 1,
+    ) -> list[RerankedHit]:
         """
-        High-level: re-score retriever hits, return top_k reranked.
+        Re-score retriever hits and return top_k reranked.
+
+        If score_threshold is set, candidates below it are dropped — BUT at
+        least `min_keep` hits are always returned (the top scorers), so a
+        hard-but-answerable query is never emptied. This makes thresholding
+        a garbage filter, not an automatic NO_ANSWER mechanism: Week 5
+        benchmarking showed rerank score alone cannot separate NO_ANSWER
+        from hard-but-answerable queries (they overlap: a normal query
+        scored -4.36 while a NO_ANSWER query scored -2.73). The LLM still
+        makes the final refusal call from the (cleaned) context.
 
         Each hit must expose `.record` (with `.content`) and `.score`.
         """
@@ -70,6 +89,12 @@ class CrossEncoderReranker:
             for rank, (hit, score) in enumerate(zip(hits, scores))
         ]
         scored.sort(key=lambda x: -x[1])
+
+        if score_threshold is not None:
+            kept = [s for s in scored if s[1] >= score_threshold]
+            if len(kept) < min_keep:
+                kept = scored[:min_keep]  # never empty an answerable query
+            scored = kept
 
         return [
             RerankedHit(
