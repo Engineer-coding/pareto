@@ -11,6 +11,9 @@ Two LLM clients:
     - small:    a cheaper/faster model (e.g. llama3.2:1b) for short,
                 factual queries the router deems simple
 
+An optional reranker (Week 5) is passed down to the inner NaiveRAG, so
+routed queries also get two-stage retrieve→rerank when enabled.
+
 The router runs before cache lookup because the cache key includes both
 retriever and model. Deterministic routing keeps cache lookups consistent.
 If no small model is provided, small-tier queries fall back to standard.
@@ -36,6 +39,8 @@ class RoutedRAG:
         cache=None,
         log_store=None,
         default_retriever: str = "hybrid",
+        reranker=None,
+        rerank_candidates: int = 20,
     ):
         if default_retriever not in retrievers:
             raise ValueError(
@@ -53,12 +58,16 @@ class RoutedRAG:
         self.log_store = log_store
 
         # Single NaiveRAG; we override retriever + llm per query.
+        # Reranker (if any) lives on the inner NaiveRAG and applies to all
+        # routes uniformly.
         self.rag = NaiveRAG(
             retriever=retrievers[default_retriever],
             llm=llm,
             top_k=top_k,
             cache=cache,
             log_store=None,
+            reranker=reranker,
+            rerank_candidates=rerank_candidates,
         )
 
     def query(self, question: str, top_k: int | None = None) -> RAGResponse:
@@ -101,8 +110,9 @@ class RoutedRAG:
     def __repr__(self) -> str:
         small = getattr(self.llm_small, "model_name", "none")
         standard = getattr(self.llm_standard, "model_name", "none")
+        reranker_name = type(self.rag.reranker).__name__ if self.rag.reranker is not None else "none"
         return (
             f"RoutedRAG(retrievers={list(self.retrievers.keys())}, "
             f"default={self.default_retriever}, "
-            f"standard={standard}, small={small})"
+            f"standard={standard}, small={small}, reranker={reranker_name})"
         )

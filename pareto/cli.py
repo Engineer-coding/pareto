@@ -328,7 +328,6 @@ def ask(
         help="LiteLLM model identifier.",
     ),
     top_k: int = typer.Option(5, "--top-k", "-k"),
-    
     retriever: str = typer.Option(
         "hybrid", "--retriever", "-r",
         help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
@@ -340,6 +339,14 @@ def ask(
     small_model: str = typer.Option(
         "ollama/llama3.2:1b", "--small-model",
         help="Model for small-tier (simple) queries when --router is on.",
+    ),
+    use_rerank: bool = typer.Option(
+        False, "--rerank",
+        help="Enable two-stage retrieval: retrieve broad, rerank to top-k.",
+    ),
+    rerank_candidates: int = typer.Option(
+        20, "--rerank-candidates",
+        help="Stage-1 candidate count when --rerank is on.",
     ),
     no_cache: bool = typer.Option(
         False, "--no-cache",
@@ -387,9 +394,15 @@ def ask(
                 threshold=cache_threshold,
             )
 
-    from pareto.observability import QueryLogStore
     log_store = QueryLogStore()
     llm = LiteLLMClient(LLMConfig(model=model))
+
+    # Optional reranker (shared by both paths)
+    reranker = None
+    if use_rerank:
+        from pareto.retrieval import CrossEncoderReranker
+        console.print("[dim]Loading cross-encoder reranker...[/dim]")
+        reranker = CrossEncoderReranker()
 
     if use_router:
         # Adaptive router: build all three retrievers + model tiering
@@ -413,6 +426,8 @@ def ask(
             top_k=top_k,
             cache=cache,
             log_store=log_store,
+            reranker=reranker,
+            rerank_candidates=rerank_candidates,
         )
     else:
         # Fixed retriever (existing behavior)
@@ -438,6 +453,8 @@ def ask(
             top_k=top_k,
             log_store=log_store,
             cache=cache,
+            reranker=reranker,
+            rerank_candidates=rerank_candidates,
         )
 
     # Run the query
@@ -454,6 +471,13 @@ def ask(
             f"\n[bold magenta]🧭 Routed to {response.extra['route']}[/bold magenta] "
             f"([dim]{response.extra['route_reason']}, "
             f"tier={response.extra.get('model_tier', 'standard')}[/dim])"
+        )
+
+    # Rerank indicator
+    if use_rerank and not response.extra.get("cache_hit"):
+        console.print(
+            f"[bold blue]🔄 Reranked[/bold blue] "
+            f"[dim](top-{top_k} from {rerank_candidates} candidates)[/dim]"
         )
 
     # Display cache status FIRST if hit (most exciting line)
