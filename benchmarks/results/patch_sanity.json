@@ -1,0 +1,1080 @@
+{
+  "system_name": "patch_sanity",
+  "test_set_name": "queries_with_dupes",
+  "timestamp": "2026-06-01T20:12:24.840726Z",
+  "num_queries": 45,
+  "k": 4,
+  "avg_hit_at_k": 1.0,
+  "avg_precision_at_k": 0.7926829268292683,
+  "avg_recall_at_k": 1.0,
+  "avg_mrr": 0.9878048780487805,
+  "avg_retrieval_latency_ms": 53.65853658536585,
+  "answer_evaluated": false,
+  "avg_keyword_coverage": 0.0,
+  "avg_prompt_tokens": 0.0,
+  "avg_completion_tokens": 0.0,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 0.0,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 14.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.8214285714285714,
+      "recall_at_k": 1.0,
+      "mrr": 0.9642857142857143
+    },
+    "finance": {
+      "n": 13.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.7115384615384616,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    },
+    "health": {
+      "n": 14.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.8392857142857143,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 252
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 252
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "basel3_summary.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 31
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 32
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 38
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 39
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 36
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 36
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 35
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 35
+    },
+    {
+      "query_id": "legal-006",
+      "query": "Does GDPR apply to companies outside the European Union?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 49
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 49
+    },
+    {
+      "query_id": "legal-007",
+      "query": "What permissions does the Apache 2.0 license grant?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 39
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 39
+    },
+    {
+      "query_id": "legal-008",
+      "query": "What are the redistribution conditions under Apache 2.0?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 32
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 32
+    },
+    {
+      "query_id": "legal-009",
+      "query": "What does the synthetic contract say about obligations?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_contract.md",
+        "synthetic_contract.md",
+        "apache_2_license.txt",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 50
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 50
+    },
+    {
+      "query_id": "legal-010",
+      "query": "What is the fine amount in the Acme Corp 2023 data breach ruling?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 48
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 49
+    },
+    {
+      "query_id": "finance-001",
+      "query": "What is Basel III?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 46
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 46
+    },
+    {
+      "query_id": "finance-002",
+      "query": "When were the Basel III reforms endorsed?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 50
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 50
+    },
+    {
+      "query_id": "finance-003",
+      "query": "What is the Liquidity Coverage Ratio in Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 85
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 85
+    },
+    {
+      "query_id": "finance-004",
+      "query": "What is the Net Stable Funding Ratio?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "kvkk_tr_wikipedia.html",
+        "synthetic_earnings.md",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 107
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 107
+    },
+    {
+      "query_id": "finance-005",
+      "query": "Summarize the main goals of Basel III reforms",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 62
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 62
+    },
+    {
+      "query_id": "finance-006",
+      "query": "What was the Q4 revenue growth in the earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "synthetic_earnings.md",
+        "gdpr_full_text.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 69
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 70
+    },
+    {
+      "query_id": "finance-007",
+      "query": "How did cloud services perform in the Q4 earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "synthetic_earnings.md",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 69
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 69
+    },
+    {
+      "query_id": "finance-008",
+      "query": "Why did hardware sales decline?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "basel3_summary.html",
+        "cdc_hypertension.html",
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 56
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 56
+    },
+    {
+      "query_id": "finance-009",
+      "query": "What is the current Bank of America stock price today?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 69
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 69
+    },
+    {
+      "query_id": "finance-010",
+      "query": "What is the projected revenue for 2026 according to Acme's forecast?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "basel3_summary.html",
+        "synthetic_earnings.md",
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 61
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 61
+    },
+    {
+      "query_id": "health-001",
+      "query": "What is considered high blood pressure?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 61
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 61
+    },
+    {
+      "query_id": "health-002",
+      "query": "What are the symptoms of high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 53
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 53
+    },
+    {
+      "query_id": "health-003",
+      "query": "What organs can high blood pressure damage?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 65
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 65
+    },
+    {
+      "query_id": "health-004",
+      "query": "How is blood pressure measured?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 53
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 53
+    },
+    {
+      "query_id": "health-005",
+      "query": "What is diabetes?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 54
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 55
+    },
+    {
+      "query_id": "health-006",
+      "query": "What are the main types of diabetes?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 49
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 49
+    },
+    {
+      "query_id": "health-007",
+      "query": "What complications can diabetes cause?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 53
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 53
+    },
+    {
+      "query_id": "health-008",
+      "query": "How many participants were in the clinical study?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 47
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 48
+    },
+    {
+      "query_id": "health-009",
+      "query": "What study design was used in the clinical study?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 50
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 50
+    },
+    {
+      "query_id": "health-010",
+      "query": "What is the discovered cure for type 1 diabetes from 2025?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 46
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 46
+    },
+    {
+      "query_id": "dupe-001",
+      "query": "Explain GDPR in simple terms",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "basel3_summary.html",
+        "apache_2_license.txt",
+        "synthetic_contract.md"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 38
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 38
+    },
+    {
+      "query_id": "dupe-002",
+      "query": "What are the fundamental principles of the General Data Protection Regulation?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 48
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 48
+    },
+    {
+      "query_id": "dupe-003",
+      "query": "Tell me about data subject rights in GDPR",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 38
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 38
+    },
+    {
+      "query_id": "dupe-004",
+      "query": "Who is the data protection officer and what do they do?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 43
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 43
+    },
+    {
+      "query_id": "dupe-005",
+      "query": "GDPR'ı kısaca açıklayın",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "hipertansiyon_tr_wikipedia.html",
+        "gdpr_full_text.html",
+        "kvkk_tr_wikipedia.html",
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 0.5,
+        "retrieval_latency_ms": 41
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 41
+    },
+    {
+      "query_id": "dupe-006",
+      "query": "Explain Basel III in a few sentences",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 36
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 36
+    },
+    {
+      "query_id": "dupe-007",
+      "query": "What is the LCR requirement in banking?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 42
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 42
+    },
+    {
+      "query_id": "dupe-008",
+      "query": "What are the main objectives behind Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 35
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 35
+    },
+    {
+      "query_id": "dupe-009",
+      "query": "How much did revenue grow in Q4?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "synthetic_earnings.md",
+        "basel3_summary.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 34
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 34
+    },
+    {
+      "query_id": "dupe-010",
+      "query": "What caused the hardware sales drop?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md",
+        "basel3_summary.html",
+        "who_diabetes.html",
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 34
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 35
+    },
+    {
+      "query_id": "dupe-011",
+      "query": "What warning signs come with high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 40
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 40
+    },
+    {
+      "query_id": "dupe-012",
+      "query": "Which body organs are at risk from hypertension?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 42
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 42
+    },
+    {
+      "query_id": "dupe-013",
+      "query": "Tell me about diabetes",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 48
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 48
+    },
+    {
+      "query_id": "dupe-014",
+      "query": "Which types of diabetes exist?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 42
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 42
+    },
+    {
+      "query_id": "dupe-015",
+      "query": "Which long-term problems does diabetes lead to?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": null,
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 48
+      },
+      "answer_metrics": null,
+      "total_latency_ms": 48
+    }
+  ],
+  "extra": {}
+}

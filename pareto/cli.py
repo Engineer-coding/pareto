@@ -540,13 +540,15 @@ def benchmark(
         "ollama/llama3.2:3b", "--model",
         help="LLM model (end_to_end mode only).",
     ),
-
     retriever: str = typer.Option(
         "hybrid",
         "--retriever", "-r",
         help="Retriever mode: 'dense', 'bm25', or 'hybrid' (default).",
     ),
-
+    use_router: bool = typer.Option(
+        False, "--router",
+        help="Use the adaptive query router (end_to_end mode).",
+    ),
     no_cache: bool = typer.Option(
         False, "--no-cache",
         help="Disable the semantic cache during the benchmark.",
@@ -574,7 +576,7 @@ def benchmark(
         f"[dim]  → {indexer.store.size} chunks, {len(test_set)} queries[/dim]"
     )
 
-   # Build the requested retriever
+    # Build the requested retriever (used in retrieval mode + as fallback)
     if retriever == "dense":
         from pareto.retrieval import DenseRetriever
         retriever_obj = DenseRetriever(indexer)
@@ -599,12 +601,32 @@ def benchmark(
         if not no_cache:
             from pareto.cache import SemanticCache
             cache = SemanticCache(threshold=cache_threshold)
-        rag = NaiveRAG(
-            retriever=retriever_obj,
-            llm=LiteLLMClient(LLMConfig(model=model)),
-            top_k=k,
-            cache=cache,
-        )
+        if use_router:
+            # Adaptive router: build all three retrievers + route per query
+            from pareto.retrieval import DenseRetriever, BM25Ranker, HybridRetriever
+            from pareto.routing import QueryRouter
+            from pareto.rag import RoutedRAG
+            ranker_r = BM25Ranker()
+            ranker_r.build_from_records(indexer.store.records)
+            retrievers = {
+                "dense": DenseRetriever(indexer),
+                "bm25": ranker_r,
+                "hybrid": HybridRetriever(indexer=indexer, bm25_ranker=ranker_r),
+            }
+            rag = RoutedRAG(
+                retrievers=retrievers,
+                router=QueryRouter(),
+                llm=LiteLLMClient(LLMConfig(model=model)),
+                top_k=k,
+                cache=cache,
+            )
+        else:
+            rag = NaiveRAG(
+                retriever=retriever_obj,
+                llm=LiteLLMClient(LLMConfig(model=model)),
+                top_k=k,
+                cache=cache,
+            )
         if limit is None:
             console.print(
                 "[yellow]Warning:[/yellow] end-to-end mode without --limit will run "
@@ -617,7 +639,8 @@ def benchmark(
             )
     runner = BenchmarkRunner(indexer=indexer, rag=rag, retriever=retriever_obj)
 
-    name = system_name or f"naive_{mode}_k{k}"
+    default_name = f"routed_{mode}_k{k}" if use_router else f"naive_{mode}_k{k}"
+    name = system_name or default_name
     console.print(f"\n[bold]Running benchmark:[/bold] {name} (mode={mode}, retriever={retriever}, k={k})\n")
 
     if mode == "retrieval":
@@ -881,9 +904,9 @@ def _stats_show_overall(store, since_dt) -> None:
 
 
 def _stats_show_grouped(store, group_by: str, since_dt) -> None:
-    if group_by not in ("model", "retriever", "cache_hit"):
+    if group_by not in ("model", "retriever", "cache_hit", "route"):
         console.print(
-            f"[red]--by must be 'model', 'retriever', or 'cache_hit', got {group_by!r}[/red]"
+            f"[red]--by must be 'model', 'retriever', 'cache_hit', or 'route', got {group_by!r}[/red]"
         )
         raise typer.Exit(2)
 

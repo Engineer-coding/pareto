@@ -48,6 +48,9 @@ class RoutedRAG:
         self.llm_standard = llm
         # Fall back to standard if no small model — tiering becomes a no-op
         self.llm_small = llm_small if llm_small is not None else llm
+        # RoutedRAG owns logging — route metadata is attached after the
+        # inner NaiveRAG returns, so NaiveRAG must NOT log (route would be null).
+        self.log_store = log_store
 
         # Single NaiveRAG; we override retriever + llm per query.
         self.rag = NaiveRAG(
@@ -55,7 +58,7 @@ class RoutedRAG:
             llm=llm,
             top_k=top_k,
             cache=cache,
-            log_store=log_store,
+            log_store=None,
         )
 
     def query(self, question: str, top_k: int | None = None) -> RAGResponse:
@@ -80,6 +83,19 @@ class RoutedRAG:
         response.extra["route"] = decision.retriever
         response.extra["route_reason"] = decision.reason
         response.extra["model_tier"] = decision.model_tier
+
+        # Log AFTER route metadata is attached (NaiveRAG didn't log)
+        if self.log_store is not None:
+            try:
+                self.log_store.log(
+                    response,
+                    retriever=decision.retriever,
+                    top_k=top_k or self.rag.top_k,
+                )
+            except Exception as e:
+                import sys
+                print(f"[pareto-routed] log failed: {e}", file=sys.stderr)
+
         return response
 
     def __repr__(self) -> str:
