@@ -3,7 +3,9 @@ NaiveRAG — the baseline pipeline.
 
 Pure pipeline, no optimization:
     1. (Optional) Semantic cache lookup. Hit → instant response.
-    2. Retrieve top-k candidates (via injected retriever).
+    2. Retrieve candidates. If a reranker is set, retrieve a broad set
+       (rerank_candidates) then rerank down to top-k; otherwise retrieve
+       top-k directly.
     3. Concatenate retrieved chunks into a prompt.
     4. Single LLM call.
     5. (Optional) Cache the response keyed by query embedding.
@@ -12,6 +14,8 @@ Pure pipeline, no optimization:
 Retriever-agnostic since Week 2: any object with `search(query, k) -> list[Hit]`
 works (DenseRetriever, BM25Ranker, HybridRetriever, future cached retrievers).
 Cache-aware since Week 3: optional SemanticCache injected at construction.
+Rerank-aware since Week 5: optional CrossEncoderReranker for two-stage
+retrieval (retrieve broad, rerank to top-k).
 
 Cache hits bypass retrieval and generation entirely — ~10-15ms total latency
 vs. ~50000ms LLM call. The cost field is set to 0 for cache hits (no LLM
@@ -48,6 +52,9 @@ class NaiveRAG:
         max_context_chars: int = 6000,
         log_store=None,
         cache=None,
+        reranker=None,
+        rerank_candidates: int = 20,
+        rerank_score_threshold: float | None = None,
     ):
         """
         Args:
@@ -61,6 +68,11 @@ class NaiveRAG:
             max_context_chars: truncate concatenated context above this size.
             log_store: optional QueryLogStore for persistence.
             cache: optional SemanticCache for embedding-based dedup.
+            reranker: optional CrossEncoderReranker. If set, retrieval
+                becomes two-stage: fetch `rerank_candidates` from the
+                retriever, then rerank down to top-k.
+            rerank_candidates: stage-1 candidate count when a reranker is
+                set (ignored otherwise).
         """
         # Resolve retriever
         if retriever is None:
@@ -82,6 +94,9 @@ class NaiveRAG:
         self.max_context_chars = max_context_chars
         self.log_store = log_store
         self.cache = cache
+        self.reranker = reranker
+        self.rerank_candidates = rerank_candidates
+        self.rerank_score_threshold = rerank_score_threshold
 
     # ── public API ────────────────────────────────────────────────────────
     def query(self, question: str, top_k: int | None = None, retriever=None, llm=None) -> RAGResponse:
@@ -95,6 +110,7 @@ class NaiveRAG:
                 Used by RoutedRAG to apply per-query routing decisions.
                 Cache keys include the retriever name, so a deterministic
                 router keeps cache lookups consistent.
+            llm: override the configured LLM for this call (model tiering).
         """
         k = top_k or self.top_k
         t0 = time.perf_counter()
@@ -132,7 +148,20 @@ class NaiveRAG:
 
         # ── 3. Retrieval (cache miss path) ──
         t_retr_start = time.perf_counter()
-        hits = active_retriever.search(question, k=k)
+        rerank_no_answer = False
+        if self.reranker is not None:
+            # Two-stage: retrieve a broad candidate set, then rerank to top-k
+            candidates = active_retriever.search(question, k=self.rerank_candidates)
+            hits = self.reranker.rerank(
+                question, candidates, top_k=k,
+                score_threshold=self.rerank_score_threshold,
+            )
+            # NO_ANSWER signal: with a threshold set, an empty result means
+            # no candidate cleared the bar — nothing relevant in the corpus.
+            if self.rerank_score_threshold is not None and not hits:
+                rerank_no_answer = True
+        else:
+            hits = active_retriever.search(question, k=k)
         retrieval_latency_ms = int((time.perf_counter() - t_retr_start) * 1000)
 
         # ── 4. Prompt build ──
@@ -163,8 +192,9 @@ class NaiveRAG:
             cost_usd=llm_resp.cost_usd,
             generation_latency_ms=generation_latency_ms,
             total_latency_ms=total_latency_ms,
-            extra={"cache_hit": False},
+            extra={"cache_hit": False, "rerank_no_answer": rerank_no_answer},
         )
+        
 
         # ── 7. Cache write (best-effort) ──
         if self.cache is not None and query_embedding is not None:
@@ -274,8 +304,9 @@ class NaiveRAG:
     def __repr__(self) -> str:
         retriever_type = type(self.retriever).__name__
         cache_name = type(self.cache).__name__ if self.cache is not None else "None"
+        reranker_name = type(self.reranker).__name__ if self.reranker is not None else "None"
         return (
             f"NaiveRAG(retriever={retriever_type}, "
             f"top_k={self.top_k}, model={self.llm.model_name}, "
-            f"cache={cache_name})"
+            f"cache={cache_name}, reranker={reranker_name})"
         )
