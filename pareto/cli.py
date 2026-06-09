@@ -573,6 +573,19 @@ def benchmark(
         False, "--router",
         help="Use the adaptive query router (end_to_end mode).",
     ),
+    use_rerank: bool = typer.Option(
+        False, "--rerank",
+        help="Enable cross-encoder reranking (end_to_end mode).",
+    ),
+    rerank_threshold: float | None = typer.Option(
+        None, "--rerank-threshold",
+        help="Drop reranked chunks below this score (garbage filter). "
+             "Fixed-retriever path only.",
+    ),
+    rerank_candidates: int = typer.Option(
+        20, "--rerank-candidates",
+        help="Stage-1 candidate count when --rerank is on.",
+    ),
     no_cache: bool = typer.Option(
         False, "--no-cache",
         help="Disable the semantic cache during the benchmark.",
@@ -625,8 +638,15 @@ def benchmark(
         if not no_cache:
             from pareto.cache import SemanticCache
             cache = SemanticCache(threshold=cache_threshold)
+
+        # Optional reranker (shared by both paths)
+        reranker = None
+        if use_rerank:
+            from pareto.retrieval import CrossEncoderReranker
+            console.print("[dim]Loading cross-encoder reranker...[/dim]")
+            reranker = CrossEncoderReranker()
+
         if use_router:
-            # Adaptive router: build all three retrievers + route per query
             from pareto.retrieval import DenseRetriever, BM25Ranker, HybridRetriever
             from pareto.routing import QueryRouter
             from pareto.rag import RoutedRAG
@@ -643,6 +663,8 @@ def benchmark(
                 llm=LiteLLMClient(LLMConfig(model=model)),
                 top_k=k,
                 cache=cache,
+                reranker=reranker,
+                rerank_candidates=rerank_candidates,
             )
         else:
             rag = NaiveRAG(
@@ -650,6 +672,9 @@ def benchmark(
                 llm=LiteLLMClient(LLMConfig(model=model)),
                 top_k=k,
                 cache=cache,
+                reranker=reranker,
+                rerank_candidates=rerank_candidates,
+                rerank_score_threshold=rerank_threshold,
             )
         if limit is None:
             console.print(
@@ -663,7 +688,12 @@ def benchmark(
             )
     runner = BenchmarkRunner(indexer=indexer, rag=rag, retriever=retriever_obj)
 
-    default_name = f"routed_{mode}_k{k}" if use_router else f"naive_{mode}_k{k}"
+    parts = []
+    if use_router:
+        parts.append("routed")
+    if use_rerank:
+        parts.append("rerank")
+    default_name = ("_".join(parts) or "naive") + f"_{mode}_k{k}"
     name = system_name or default_name
     console.print(f"\n[bold]Running benchmark:[/bold] {name} (mode={mode}, retriever={retriever}, k={k})\n")
 

@@ -1,0 +1,883 @@
+{
+  "system_name": "rerank_hybrid",
+  "test_set_name": "queries",
+  "timestamp": "2026-06-09T22:00:01.555285Z",
+  "num_queries": 30,
+  "k": 5,
+  "avg_hit_at_k": 1.0,
+  "avg_precision_at_k": 0.9615384615384616,
+  "avg_recall_at_k": 1.0,
+  "avg_mrr": 1.0,
+  "avg_retrieval_latency_ms": 1816.923076923077,
+  "answer_evaluated": true,
+  "avg_keyword_coverage": 0.8782051282051283,
+  "avg_prompt_tokens": 344.4,
+  "avg_completion_tokens": 87.83333333333333,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 28014.366666666665,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 9.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.9444444444444444,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    },
+    "finance": {
+      "n": 8.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    },
+    "health": {
+      "n": 9.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.9444444444444444,
+      "recall_at_k": 1.0,
+      "mrr": 1.0
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "synthetic_contract.md"
+      ],
+      "answer": "According to [1], the General Data Protection Regulation (GDPR) is a European Union regulation that aims to harmonize data privacy laws across Europe. It was adopted on April 27, 2016, and became effective on May 25, 2018.\n\nThe GDPR regulates the processing of personal data of EU residents, outlining rules for data collection, storage, and sharing. Its primary goal is to protect individuals' rights and freedoms in relation to their personal data.\n\n[1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 510
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 455,
+        "prompt_tokens": 302,
+        "completion_tokens": 99,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 38886
+      },
+      "total_latency_ms": 39397
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) came into effect on May 25th, 2018. [1] This is stated in the context provided, which mentions that the regulation is applicable as of this date in all member states.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1003
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 212,
+        "prompt_tokens": 274,
+        "completion_tokens": 50,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 6887
+      },
+      "total_latency_ms": 7891
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 4 of the General Data Protection Regulation (GDPR), the key data processing principles are:\n\n1. Lawfulness, fairness and transparency [1]\n2. Purpose limitation [1]\n3. Data minimization [1]\n4. Accuracy [1]\n5. Storage limitation [1]\n6. Integrity and confidentiality [1]\n\nThese principles aim to ensure that personal data is processed in a way that respects the rights of individuals and maintains their trust.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1572
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 428,
+        "prompt_tokens": 275,
+        "completion_tokens": 94,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 21923
+      },
+      "total_latency_ms": 23496
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "Under the General Data Protection Regulation (GDPR), data subjects have several rights, including:\n\n1. Right of access by the data subject (Article 15): The right to request access to their personal data.\n2. Right to rectification (Article 16): The right to correct inaccurate or incomplete personal data.\n3. Right to erasure (Article 17): The right to have personal data deleted or removed.\n4. Right to restriction of processing (Article 18): The right to limit the processing of their personal data.\n5. Right to object and automated individual decision-making (Articles 21 and 22): The right to object to certain types of processing, including profiling.\n6. Right to notification regarding rectification or erasure of personal data or restriction of processing (Article 19).\n7. Right to data portability (Article 20).\n\nThese rights are designed to protect the privacy and autonomy of individuals in relation to their personal data.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 855
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 933,
+        "prompt_tokens": 541,
+        "completion_tokens": 193,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 42017
+      },
+      "total_latency_ms": 42873
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 39 of the General Data Protection Regulation (GDPR), the tasks of the data protection officer include monitoring compliance with codes of conduct and certification, as well as other specific duties. [1]\n\nThe data protection officer's primary role is to ensure that an organization complies with the GDPR and to provide guidance on data protection matters. They are responsible for monitoring the implementation of approved codes of conduct and certification schemes, as well as providing advice on data protection issues.\n\nIn summary, the data protection officer plays a crucial role in ensuring compliance with the GDPR and providing guidance on data protection matters within an organization.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1581
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 715,
+        "prompt_tokens": 262,
+        "completion_tokens": 124,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 23766
+      },
+      "total_latency_ms": 25349
+    },
+    {
+      "query_id": "legal-006",
+      "query": "Does GDPR apply to companies outside the European Union?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 3(1) of the General Data Protection Regulation (GDPR), [1], the GDPR applies to any natural or legal person who, for the exercise of their State or government functions, is situated in the EU.\n\nHowever, it also states that the GDPR does not apply to companies outside the European Union if they are not established in the EU and do not offer goods or services, nor have a target audience in the EU. [1]\n\nIn other words, the GDPR's territorial scope is limited to companies within the EU, unless they meet specific exceptions for non-EU companies.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2195
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 567,
+        "prompt_tokens": 277,
+        "completion_tokens": 122,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 29639
+      },
+      "total_latency_ms": 31834
+    },
+    {
+      "query_id": "legal-007",
+      "query": "What permissions does the Apache 2.0 license grant?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "According to the Apache 2.0 license, it grants users permission to use, reproduce, and distribute the software on an \"AS IS\" BASIS, without warranties or conditions of any kind [1]. This means that the license does not provide explicit permissions for specific uses, but rather allows users to use the software freely, as long as they comply with the terms and conditions outlined in the license.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1491
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 396,
+        "prompt_tokens": 335,
+        "completion_tokens": 81,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 25537
+      },
+      "total_latency_ms": 27029
+    },
+    {
+      "query_id": "legal-008",
+      "query": "What are the redistribution conditions under Apache 2.0?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "According to Section 4 of the Apache License, Version 2.0 [1], the redistribution conditions are as follows:\n\nYou may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:\n\n(a) You must give any other recipients of the Work or Derivative Works a copy of this License; and\n\n(b) You must cause any modified files to carry prominent notices stating that You changed the files.\n\nThese conditions are specified in Section 4 of the Apache License [1].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1691
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 588,
+        "prompt_tokens": 467,
+        "completion_tokens": 121,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 40737
+      },
+      "total_latency_ms": 42428
+    },
+    {
+      "query_id": "legal-009",
+      "query": "What does the synthetic contract say about obligations?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_contract.md"
+      ],
+      "answer": "According to [1], the synthetic contract outlines specific obligations for each party involved. However, without access to the actual text of the synthetic_contract.md file, I cannot provide a direct quote or further details on the obligations outlined in the agreement.\n\nIf you could provide more context or clarify which subsections are relevant, I would be happy to try and assist you further.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1886
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 396,
+        "prompt_tokens": 157,
+        "completion_tokens": 74,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 13011
+      },
+      "total_latency_ms": 14898
+    },
+    {
+      "query_id": "legal-010",
+      "query": "What is the fine amount in the Acme Corp 2023 data breach ruling?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": "I don't have enough information to answer your question about the fine amount in the Acme Corp 2023 data breach ruling. The provided context appears to be a technical report from Wikipedia, which does not mention any data breach or fine amount related to Acme Corp.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1919
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 265,
+        "prompt_tokens": 348,
+        "completion_tokens": 55,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 22976
+      },
+      "total_latency_ms": 24896
+    },
+    {
+      "query_id": "finance-001",
+      "query": "What is Basel III?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks.\n\nThe reforms were endorsed by the Group of Central Bank Governors and Heads of Supervision (GHOS) on December 7, 2017, and January 14, 2019, respectively. [4] The adjustments aim to make banks more resilient and restore confidence in banking systems.\n\nBasel III comprises minimum requirements for internationally active banks, including Minimum capital requirements for market risk, Liquidity Coverage Ratio, Net Stable Funding Ratio, and other standards. [2]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1776
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 702,
+        "prompt_tokens": 565,
+        "completion_tokens": 144,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 50026
+      },
+      "total_latency_ms": 51803
+    },
+    {
+      "query_id": "finance-002",
+      "query": "When were the Basel III reforms endorsed?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "The Basel III reforms were endorsed by the Group of Central Bank Governors and Heads of Supervision (GHOS) on two separate occasions. \n\nAccording to [1], the adjustments to the market risk framework were endorsed by the GHOS on 14 January 2019.\n\nAdditionally, the minimum capital requirements for market risk were initially endorsed in January 2016, with a revised version being adopted on 14 January 2019, as stated in [2].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1685
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 424,
+        "prompt_tokens": 519,
+        "completion_tokens": 93,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 38587
+      },
+      "total_latency_ms": 40272
+    },
+    {
+      "query_id": "finance-003",
+      "query": "What is the Liquidity Coverage Ratio in Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html"
+      ],
+      "answer": "The Liquidity Coverage Ratio (LCR) is a liquidity standard under Basel III. It requires banks to hold high-quality liquid assets that can be easily converted into cash within a 30-day period, minus certain exceptions [1]. The LCR aims to ensure that banks have sufficient liquidity to meet their short-term obligations.\n\nThe LCR is calculated as the ratio of high-quality liquid assets (HQLA) to total net cash outflows over a 30-day period. HQLA includes items such as central bank reserves, commercial paper, treasury bills, and other liquid assets [1]. The LCR is typically expressed as a percentage.\n\nThe LCR was introduced in January 2013 as part of Basel III, with the aim of improving banks' ability to withstand liquidity shocks and reducing the risk of bank failures.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1722
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 776,
+        "prompt_tokens": 225,
+        "completion_tokens": 166,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 27510
+      },
+      "total_latency_ms": 29233
+    },
+    {
+      "query_id": "finance-004",
+      "query": "What is the Net Stable Funding Ratio?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html"
+      ],
+      "answer": "The Net Stable Funding Ratio (NSFR) is a measure of a bank's stable funding position. It represents the difference between a bank's stable funding inflows and outflows over a one-year period, adjusted for certain exceptions.\n\n[1] The NSFR was introduced as part of Basel III, a global regulatory framework aimed at improving banking stability. According to Basel III, banks must meet a minimum NSFR of 100% by January 2019 [2]. This means that for every 100 units of risk-weighted assets, the bank must have at least 100 units of stable funding.\n\nThe NSFR is calculated based on a bank's stable funding inflows and outflows over a one-year period, including interest payments, dividend payments, and other stable funding sources. The ratio helps regulators assess a bank's ability to meet its short-term funding needs without relying on short-term debt or equity.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2502
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 863,
+        "prompt_tokens": 222,
+        "completion_tokens": 183,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 23031
+      },
+      "total_latency_ms": 25534
+    },
+    {
+      "query_id": "finance-005",
+      "query": "Summarize the main goals of Basel III reforms",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html"
+      ],
+      "answer": "The main goals of Basel III reforms are to strengthen the regulation, supervision, and risk management of banks in response to the financial crisis of 2007-09. According to [2], the revised standards aim to make banks more resilient and restore confidence in banking systems.\n\nSpecifically, Basel III aims to achieve several objectives:\n\n1. Increase bank capital requirements to reduce the likelihood of bank failures.\n2. Enhance liquidity coverage ratios to ensure banks have sufficient liquid assets to meet their short-term obligations.\n3. Introduce a net stable funding ratio to promote sustainable funding practices and reduce reliance on short-term debt.\n\nBy achieving these goals, Basel III reforms aim to improve the overall stability and soundness of the banking system.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1750
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 779,
+        "prompt_tokens": 522,
+        "completion_tokens": 145,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 48089
+      },
+      "total_latency_ms": 49840
+    },
+    {
+      "query_id": "finance-006",
+      "query": "What was the Q4 revenue growth in the earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "The Q4 revenue growth was 18 percent year over year, as stated in the earnings report [1].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2471
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 90,
+        "prompt_tokens": 159,
+        "completion_tokens": 23,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 8040
+      },
+      "total_latency_ms": 10512
+    },
+    {
+      "query_id": "finance-007",
+      "query": "How did cloud services perform in the Q4 earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "I don't have enough information to answer your question. The provided context only mentions \"cloud revenue\" without specifying whether it was part of a Q4 earnings report or not.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2636
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.3333333333333333,
+        "answer_length_chars": 178,
+        "prompt_tokens": 150,
+        "completion_tokens": 36,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 11158
+      },
+      "total_latency_ms": 13795
+    },
+    {
+      "query_id": "finance-008",
+      "query": "Why did hardware sales decline?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "According to the context, hardware sales declined due to supply constraints. [1] This is stated in a source file named \"synthetic_earnings.md\". The exact reason for the decline is not specified in this context, but it is mentioned that supply constraints were the cause of the decline in hardware sales.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1854
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 303,
+        "prompt_tokens": 143,
+        "completion_tokens": 63,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 12954
+      },
+      "total_latency_ms": 14809
+    },
+    {
+      "query_id": "finance-009",
+      "query": "What is the current Bank of America stock price today?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "kvkk_tr_wikipedia.html"
+      ],
+      "answer": "I don't have enough information to provide the current Bank of America stock price. The provided context appears to be a Wikipedia page with rendering data and does not contain any financial information, including stock prices.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2567
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 227,
+        "prompt_tokens": 371,
+        "completion_tokens": 41,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 28523
+      },
+      "total_latency_ms": 31090
+    },
+    {
+      "query_id": "finance-010",
+      "query": "What is the projected revenue for 2026 according to Acme's forecast?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": "I don't have enough information to answer your question. The provided context appears to be a Wikipedia page about high blood pressure, and it does not mention Acme or any projections for revenue in 2026.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2138
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 204,
+        "prompt_tokens": 371,
+        "completion_tokens": 43,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 28898
+      },
+      "total_latency_ms": 31036
+    },
+    {
+      "query_id": "health-001",
+      "query": "What is considered high blood pressure?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), high blood pressure is consistently at or above 130/80 mm Hg. [1] This is the definition provided on the CDC website, specifically in the section titled \"What is High Blood Pressure?\"",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1673
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 250,
+        "prompt_tokens": 494,
+        "completion_tokens": 54,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 33913
+      },
+      "total_latency_ms": 35587
+    },
+    {
+      "query_id": "health-002",
+      "query": "What are the symptoms of high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to [3], high blood pressure typically has no signs or symptoms. However, it can cause problems for various parts of the body, such as the heart, brain, kidneys, and eyes. The CDC states that \"no matter your age, you can take steps each day to keep your blood pressure in a healthy range\" ([3]).",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1754
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 304,
+        "prompt_tokens": 717,
+        "completion_tokens": 70,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 52029
+      },
+      "total_latency_ms": 53784
+    },
+    {
+      "query_id": "health-003",
+      "query": "What organs can high blood pressure damage?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), high blood pressure can damage several important organs, including:\n\n* Heart\n* Brain\n* Kidneys\n* Eyes\n\nThese organs are highlighted in an illustration provided by the CDC, which shows the potential health problems caused by high blood pressure.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1676
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 311,
+        "prompt_tokens": 615,
+        "completion_tokens": 61,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 41363
+      },
+      "total_latency_ms": 43040
+    },
+    {
+      "query_id": "health-004",
+      "query": "How is blood pressure measured?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "hipertansiyon_tr_wikipedia.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), measuring blood pressure involves taking a reading of the systolic (top number) and diastolic (bottom number) pressures. [1] The measurement is typically taken using a sphygmomanometer, which is a device that wraps around the upper arm.\n\nThe American Heart Association (AHA) recommends that blood pressure be measured at least twice, on two separate occasions, to confirm the diagnosis. [2] This allows for an accurate assessment of blood pressure and helps to rule out any potential errors or inconsistencies in measurement.\n\nIt's worth noting that there is no single \"normal\" blood pressure reading, but rather a range of values considered healthy: 90/60 mmHg to 120/80 mmHg. [2]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1629
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 748,
+        "prompt_tokens": 305,
+        "completion_tokens": 162,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 34704
+      },
+      "total_latency_ms": 36333
+    },
+    {
+      "query_id": "health-005",
+      "query": "What is diabetes?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "Diabetes is a chronic disease that occurs when the pancreas does not produce enough insulin or when the body cannot effectively use the insulin it produces [1]. This leads to hyperglycaemia, also known as raised blood glucose or raised blood sugar.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2073
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 248,
+        "prompt_tokens": 303,
+        "completion_tokens": 51,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 19804
+      },
+      "total_latency_ms": 21878
+    },
+    {
+      "query_id": "health-006",
+      "query": "What are the main types of diabetes?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "According to the provided context, there are two main types of diabetes mentioned:\n\n1. Type 1 diabetes: characterized by deficient insulin production and requiring daily administration of insulin.\n2. Type 2 diabetes: affects how the body uses sugar (glucose) for energy, stopping the body from using insulin properly.\n\nNote that these are the only two types explicitly mentioned in the provided context.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1826
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 403,
+        "prompt_tokens": 307,
+        "completion_tokens": 78,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 28730
+      },
+      "total_latency_ms": 30558
+    },
+    {
+      "query_id": "health-007",
+      "query": "What complications can diabetes cause?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "According to [2], diabetes can cause several complications, including:\n\n* Blindness due to damage to blood vessels in the eyes\n* Kidney failure\n* Heart attacks\n* Stroke\n* Lower limb amputation (due to nerve damage and poor blood flow)\n\nThese complications can occur over time as a result of uncontrolled diabetes. Regular screening and treatment for complications can help prevent or delay these outcomes.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1839
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 405,
+        "prompt_tokens": 479,
+        "completion_tokens": 82,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 38494
+      },
+      "total_latency_ms": 40333
+    },
+    {
+      "query_id": "health-008",
+      "query": "How many participants were in the clinical study?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md"
+      ],
+      "answer": "According to the context, there were 1200 participants in the clinical study. [1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2708
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 81,
+        "prompt_tokens": 147,
+        "completion_tokens": 20,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 9358
+      },
+      "total_latency_ms": 12067
+    },
+    {
+      "query_id": "health-009",
+      "query": "What study design was used in the clinical study?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md"
+      ],
+      "answer": "The study design used in the clinical study was a randomized double-blind design with placebo control. [1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2882
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 106,
+        "prompt_tokens": 148,
+        "completion_tokens": 22,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 9069
+      },
+      "total_latency_ms": 11951
+    },
+    {
+      "query_id": "health-010",
+      "query": "What is the discovered cure for type 1 diabetes from 2025?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "who_diabetes.html"
+      ],
+      "answer": "I couldn't find any information on a discovered cure for type 1 diabetes from 2025. The provided context only discusses the prevalence of diabetes, its consequences, and ways to prevent or treat it, but does not mention a cure for type 1 diabetes specifically.\n\nIn fact, there is currently no known cure for type 1 diabetes, although researchers are working on developing new treatments and therapies to manage the condition.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2752
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 425,
+        "prompt_tokens": 332,
+        "completion_tokens": 85,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 30772
+      },
+      "total_latency_ms": 33524
+    }
+  ],
+  "extra": {
+    "refusal_accuracy": 0.75
+  }
+}
