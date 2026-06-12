@@ -16,6 +16,7 @@ or any subclass). Future Week 2+ systems plug in here without changes.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import time
 from pathlib import Path
@@ -226,16 +227,62 @@ class BenchmarkRunner:
 
 # ── persistence ──────────────────────────────────────────────────────────
 
-def save_report(report: BenchmarkReport, path: str | Path) -> Path:
-    """Persist a report as JSON. Returns the written path."""
+def _to_json(report) -> str:
+    """Serialize any report type to a JSON string.
+
+    Handles, in order of preference:
+      - pydantic v2 models      (.model_dump_json)
+      - pydantic v1 models      (.json)
+      - dataclasses             (asdict)
+      - plain objects           (__dict__)
+      - anything else           (json.dumps with default=str fallback)
+
+    This keeps save_report agnostic to the report type, so both
+    BenchmarkReport (pydantic) and CorpusChunkingReport (dataclass) work.
+    """
+    # pydantic v2
+    model_dump_json = getattr(report, "model_dump_json", None)
+    if callable(model_dump_json):
+        return model_dump_json(indent=2)
+
+    # pydantic v1
+    json_method = getattr(report, "json", None)
+    if callable(json_method):
+        return json_method(indent=2)
+
+    # dataclass instance
+    if dataclasses.is_dataclass(report) and not isinstance(report, type):
+        return json.dumps(
+            dataclasses.asdict(report), indent=2, ensure_ascii=False, default=str
+        )
+
+    # plain object with attributes
+    if hasattr(report, "__dict__"):
+        return json.dumps(
+            vars(report), indent=2, ensure_ascii=False, default=str
+        )
+
+    # last-resort: let json figure it out, stringifying unknowns
+    return json.dumps(report, indent=2, ensure_ascii=False, default=str)
+
+
+def save_report(report, path: str | Path) -> Path:
+    """Persist a report as JSON. Returns the written path.
+
+    Accepts any report type (BenchmarkReport, CorpusChunkingReport, ...).
+    """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    p.write_text(_to_json(report), encoding="utf-8")
     return p
 
 
 def load_report(path: str | Path) -> BenchmarkReport:
-    """Inverse of save_report. Useful for comparing runs across weeks."""
+    """Inverse of save_report for BenchmarkReport. Useful for comparing runs.
+
+    Note: only reconstructs BenchmarkReport. Other report types are written
+    by save_report but not read back here (not needed downstream).
+    """
     p = Path(path)
     raw = json.loads(p.read_text(encoding="utf-8"))
     return BenchmarkReport(**raw)
