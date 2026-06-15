@@ -4,6 +4,9 @@ BenchmarkRunner — execute a test set against a RAG system and produce a report
 Two modes:
     retrieval_only — embed + search only. Fast (seconds for 30 queries).
                      Used continuously during Week 2-5 retrieval optimization.
+                     Since Week 6, an optional reranker can be applied here too
+                     (two-stage retrieve-broad -> rerank-to-k) so reranking can
+                     be measured without paying for LLM generation.
 
     end_to_end     — full RAG pipeline (retrieve + LLM). Slow on local CPU
                      (~30 minutes for 30 queries with llama3.2:3b). Used at
@@ -54,6 +57,9 @@ class BenchmarkRunner:
         indexer: Indexer,
         rag: NaiveRAG | None = None,
         retriever=None,  # any object with `search(query, k) -> list[Hit]`
+        reranker=None,   # optional CrossEncoderReranker (retrieval mode)
+        rerank_candidates: int = 20,
+        rerank_score_threshold: float | None = None,
     ):
         self.indexer = indexer
         self.rag = rag
@@ -62,8 +68,13 @@ class BenchmarkRunner:
             from pareto.retrieval.dense import DenseRetriever
             retriever = DenseRetriever(indexer)
         self.retriever = retriever
+        # Reranker is used only in retrieval-only mode. In end-to-end mode the
+        # reranker lives inside `rag` (NaiveRAG/RoutedRAG) and is applied there.
+        self.reranker = reranker
+        self.rerank_candidates = rerank_candidates
+        self.rerank_score_threshold = rerank_score_threshold
 
-    # ── retrieval-only mode ───────────────────────────────────────────────
+    # -- retrieval-only mode ------------------------------------------------
     def run_retrieval(
         self,
         test_set: TestSet,
@@ -78,7 +89,7 @@ class BenchmarkRunner:
             limit=limit, use_llm=False, show_progress=show_progress,
         )
 
-    # ── end-to-end mode ───────────────────────────────────────────────────
+    # -- end-to-end mode ----------------------------------------------------
     def run_end_to_end(
         self,
         test_set: TestSet,
@@ -97,7 +108,7 @@ class BenchmarkRunner:
             limit=limit, use_llm=True, show_progress=show_progress,
         )
 
-    # ── internals ─────────────────────────────────────────────────────────
+    # -- internals ----------------------------------------------------------
     def _run(
         self,
         test_set: TestSet,
@@ -136,12 +147,27 @@ class BenchmarkRunner:
             system_name=system_name, answer_evaluated=use_llm,
         )
 
+    def _retrieve(self, query_text: str, k: int):
+        """Retrieval-only retrieval, with optional two-stage reranking.
+
+        Mirrors NaiveRAG's retrieval step exactly: if a reranker is set,
+        fetch a broad candidate set then rerank down to top-k (with the same
+        score_threshold semantics); otherwise retrieve top-k directly.
+        """
+        if self.reranker is not None:
+            candidates = self.retriever.search(query_text, k=self.rerank_candidates)
+            return self.reranker.rerank(
+                query_text, candidates, top_k=k,
+                score_threshold=self.rerank_score_threshold,
+            )
+        return self.retriever.search(query_text, k=k)
+
     def _run_one(self, query, k: int, use_llm: bool) -> BenchmarkResult:
         """Execute one query through retrieval (and optionally generation)."""
         t0 = time.perf_counter()
 
         if use_llm:
-            # Full RAG path — single call covers both retrieval and generation
+            # Full RAG path -- single call covers both retrieval and generation
             rag_response = self.rag.query(query.query, top_k=k)
             retrieved_sources = [
                 Path(h.record.source).name for h in rag_response.retrieved
@@ -159,9 +185,10 @@ class BenchmarkRunner:
             )
             answer = rag_response.answer
         else:
-            # Retrieval-only path — uses injected retriever (Dense/BM25/Hybrid/...)
+            # Retrieval-only path -- injected retriever (Dense/BM25/Hybrid/...)
+            # with optional two-stage reranking (Week 6).
             t_retr = time.perf_counter()
-            hits = self.retriever.search(query.query, k=k)
+            hits = self._retrieve(query.query, k=k)
             retrieval_latency_ms = int((time.perf_counter() - t_retr) * 1000)
 
             retrieved_sources = [Path(h.record.source).name for h in hits]
@@ -225,7 +252,7 @@ class BenchmarkRunner:
         return report
 
 
-# ── persistence ──────────────────────────────────────────────────────────
+# -- persistence ------------------------------------------------------------
 
 def _to_json(report) -> str:
     """Serialize any report type to a JSON string.

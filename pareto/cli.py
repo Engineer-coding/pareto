@@ -575,12 +575,15 @@ def benchmark(
     ),
     use_rerank: bool = typer.Option(
         False, "--rerank",
-        help="Enable cross-encoder reranking (end_to_end mode).",
+        help="Enable cross-encoder reranking. Works in BOTH retrieval and "
+             "end_to_end modes (retrieval mode reranks the candidate set "
+             "without calling the LLM).",
     ),
     rerank_threshold: float | None = typer.Option(
         None, "--rerank-threshold",
         help="Drop reranked chunks below this score (garbage filter). "
-             "Fixed-retriever path only.",
+             "Applies in retrieval mode and in the fixed-retriever "
+             "end_to_end path (not the router path).",
     ),
     rerank_candidates: int = typer.Option(
         20, "--rerank-candidates",
@@ -610,7 +613,7 @@ def benchmark(
     indexer = Indexer.load(index_dir)
     test_set = TestSet.from_yaml(test_set_path)
     console.print(
-        f"[dim]  → {indexer.store.size} chunks, {len(test_set)} queries[/dim]"
+        f"[dim]  \u2192 {indexer.store.size} chunks, {len(test_set)} queries[/dim]"
     )
 
     # Build the requested retriever (used in retrieval mode + as fallback)
@@ -631,6 +634,15 @@ def benchmark(
         console.print(f"[red]Unknown retriever:[/red] {retriever}")
         raise typer.Exit(1)
 
+    # Optional reranker -- shared by both modes.
+    #   retrieval mode: handed to the BenchmarkRunner (applied in _retrieve).
+    #   end_to_end mode: handed to NaiveRAG/RoutedRAG (applied in rag.query).
+    reranker = None
+    if use_rerank:
+        from pareto.retrieval import CrossEncoderReranker
+        console.print("[dim]Loading cross-encoder reranker...[/dim]")
+        reranker = CrossEncoderReranker()
+
     # Runner setup
     rag = None
     cache = None
@@ -638,13 +650,6 @@ def benchmark(
         if not no_cache:
             from pareto.cache import SemanticCache
             cache = SemanticCache(threshold=cache_threshold)
-
-        # Optional reranker (shared by both paths)
-        reranker = None
-        if use_rerank:
-            from pareto.retrieval import CrossEncoderReranker
-            console.print("[dim]Loading cross-encoder reranker...[/dim]")
-            reranker = CrossEncoderReranker()
 
         if use_router:
             from pareto.retrieval import DenseRetriever, BM25Ranker, HybridRetriever
@@ -686,7 +691,15 @@ def benchmark(
                 f"[dim]Semantic cache enabled (threshold={cache_threshold}). "
                 f"Paraphrase queries may hit the cache and skip the LLM.[/dim]"
             )
-    runner = BenchmarkRunner(indexer=indexer, rag=rag, retriever=retriever_obj)
+
+    runner = BenchmarkRunner(
+        indexer=indexer,
+        rag=rag,
+        retriever=retriever_obj,
+        reranker=reranker,
+        rerank_candidates=rerank_candidates,
+        rerank_score_threshold=rerank_threshold,
+    )
 
     parts = []
     if use_router:
@@ -702,7 +715,7 @@ def benchmark(
     else:
         report = runner.run_end_to_end(test_set, k=k, system_name=name, limit=limit)
 
-    # ── pretty-print summary ─────────────────────────────────────────────
+    # -- pretty-print summary ---------------------------------------------
     console.print()
     console.print(f"[bold cyan]System:[/bold cyan] {report.system_name}")
     console.print(
@@ -761,7 +774,7 @@ def benchmark(
     if misses:
         console.print(f"\n[yellow]Retrieval misses ({len(misses)}):[/yellow]")
         for r in misses[:5]:
-            console.print(f"  ✗ [{r.query_id}] {r.query}")
+            console.print(f"  \u2717 [{r.query_id}] {r.query}")
             console.print(f"    [dim]retrieved: {r.retrieved_sources}[/dim]")
         if len(misses) > 5:
             console.print(f"  ... and {len(misses) - 5} more")
@@ -772,7 +785,7 @@ def benchmark(
     saved = save_report(report, output)
     console.print(f"\n[green]Report saved:[/green] {saved}")
 
-    # ── cache stats (end-to-end with cache) ──────────────────────────────
+    # -- cache stats (end-to-end with cache) ------------------------------
     if cache is not None:
         cstats = cache.stats()
         ct = Table(title="Cache Stats")
