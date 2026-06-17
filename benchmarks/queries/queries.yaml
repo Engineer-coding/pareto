@@ -1,6 +1,10 @@
-# Pareto benchmark test set — Week 1 baseline.
+# Pareto benchmark test set — Week 6 expanded (corpus scale-up).
 # Ground truth is source-based (filename substrings) + keyword-based (lowercase
 # substring match in the generated answer).
+#
+# 45 queries across 3 domains (15 each). 10 NO_ANSWER queries (topic-adjacent:
+# the subject appears in the corpus but the specific answer does not), so
+# refusal accuracy now moves in 10% steps instead of 25%.
 
 # ══════════════════════════════════════════════════════════════════════
 # LEGAL
@@ -89,6 +93,51 @@
   expected_keywords: []
   notes: "Corpus has no such record. System should say it cannot answer."
 
+- id: legal-011
+  query: "What was the Data Protection Directive?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [data_protection_directive]
+  expected_keywords: [directive, data protection]
+  notes: "1995 EU directive, predecessor to GDPR. New doc."
+
+- id: legal-012
+  query: "Genel Veri Koruma Tüzüğü neyi düzenler?"
+  domain: legal
+  difficulty: medium
+  type: factual
+  expected_sources: [gdpr_tr_wikipedia]
+  expected_keywords: [veri, koruma]
+  notes: "Turkish-language GDPR query. Tests Turkish->hybrid routing on new doc."
+
+- id: legal-013
+  query: "Gizlilik kavramı ne anlama gelir?"
+  domain: legal
+  difficulty: easy
+  type: factual
+  expected_sources: [mahremiyet_tr_wikipedia]
+  expected_keywords: [kişisel]
+  notes: "Turkish privacy concept. Doc redirects to 'Gizlilik' on Wikipedia."
+
+- id: legal-014
+  query: "What is the maximum penalty for violating the California Consumer Privacy Act?"
+  domain: legal
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Topic-adjacent: corpus covers GDPR/KVKK but NOT CCPA. Should refuse."
+
+- id: legal-015
+  query: "How much was TechCorp fined under the Turkish KVKK in 2024?"
+  domain: legal
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "KVKK is in corpus, but no such company/fine record. Should refuse."
+
 # ══════════════════════════════════════════════════════════════════════
 # FINANCE
 # ══════════════════════════════════════════════════════════════════════
@@ -174,6 +223,51 @@
   expected_sources: []
   expected_keywords: []
   notes: "Not in corpus."
+
+- id: finance-011
+  query: "What is the purpose of banking regulation and supervision?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [bank_regulation]
+  expected_keywords: [bank, risk]
+  notes: "New doc: Banking regulation and supervision."
+
+- id: finance-012
+  query: "Enflasyon nedir ve neden ortaya çıkar?"
+  domain: finance
+  difficulty: easy
+  type: factual
+  expected_sources: [enflasyon_tr_wikipedia]
+  expected_keywords: [fiyat]
+  notes: "Turkish inflation query. Tests Turkish->hybrid routing on new doc."
+
+- id: finance-013
+  query: "What is the capital adequacy ratio?"
+  domain: finance
+  difficulty: medium
+  type: factual
+  expected_sources: [capital_adequacy]
+  expected_keywords: [capital, ratio]
+  notes: "New doc: Capital adequacy ratio."
+
+- id: finance-014
+  query: "What was Turkey's inflation rate in December 2027?"
+  domain: finance
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Topic-adjacent: inflation doc exists, but this future date is not in corpus."
+
+- id: finance-015
+  query: "What was JPMorgan's exact Tier 1 capital ratio in Q3 2025?"
+  domain: finance
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Topic-adjacent: capital ratio concept in corpus, but no specific bank/quarter figure."
 
 # ══════════════════════════════════════════════════════════════════════
 # HEALTH
@@ -261,3 +355,48 @@
   expected_sources: []
   expected_keywords: []
   notes: "No such cure exists. Hallucination check."
+
+- id: health-011
+  query: "Obezite nedir ve sağlığı nasıl etkiler?"
+  domain: health
+  difficulty: easy
+  type: factual
+  expected_sources: [obezite_tr_wikipedia]
+  expected_keywords: [yağ]
+  notes: "Turkish obesity query. Tests Turkish->hybrid routing on new doc."
+
+- id: health-012
+  query: "Kanser nasıl oluşur?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [kanser_tr_wikipedia]
+  expected_keywords: [hücre]
+  notes: "Turkish cancer query on new doc."
+
+- id: health-013
+  query: "What are the main risk factors for cardiovascular disease?"
+  domain: health
+  difficulty: medium
+  type: factual
+  expected_sources: [who_cvd]
+  expected_keywords: [diet, tobacco]
+  notes: "New doc: WHO cardiovascular diseases fact sheet."
+
+- id: health-014
+  query: "What will the global obesity rate be in 2030?"
+  domain: health
+  difficulty: hard
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Topic-adjacent: obesity docs exist, but no 2030 projection in corpus."
+
+- id: health-015
+  query: "What dosage of metformin should I personally take for my diabetes?"
+  domain: health
+  difficulty: medium
+  type: no_answer
+  expected_sources: []
+  expected_keywords: []
+  notes: "Topic-adjacent: diabetes in corpus, but no personal dosing advice. Should refuse."
