@@ -3,6 +3,7 @@ FastAPI HTTP server for Pareto.
 
 Surface area:
     GET  /health              -- liveness + index stats + loaded layers
+    GET  /stats               -- cache hit rate, savings, recent queries (SQLite)
     POST /ask                 -- full RAG query -> grounded answer + sources +
                                  stats, with optional cache / router / rerank
     POST /search              -- retrieval-only (no LLM)
@@ -145,9 +146,10 @@ def create_app(
     def _citations_from_response(rag_resp) -> list[CitationItem]:
         """Build citation items from a RAGResponse (handles cache-hit case)."""
         if rag_resp.extra.get("cache_hit"):
-            # Cache hits don't carry retrieved objects, only cached source names
+            # Cache hits don't carry retrieved objects, only cached source names.
+            # Normalize to bare filename so the UI matches the non-cache path.
             return [
-                CitationItem(source=s, score=None, preview="")
+                CitationItem(source=Path(s).name, score=None, preview="")
                 for s in rag_resp.extra.get("cached_citations", [])
             ]
         return [
@@ -208,6 +210,24 @@ def create_app(
             "reranker_loaded": reranker is not None,
             "cache_size": cache.stats().get("size", 0),
         }
+
+    @app.get("/stats")
+    def stats(last: int = 10) -> dict[str, Any]:
+        """Aggregate query stats + recent queries from the SQLite log."""
+        try:
+            agg = log_store.aggregate()
+            overall = (agg.get("overall", {}) if agg else {}) or {}
+            recent = [dict(r) for r in log_store.last_n(last)]
+            savings = (
+                log_store.total_savings()
+                if (overall.get("cache_hits") or 0) > 0
+                else {"hits": 0, "saved_cost_usd": 0.0, "saved_latency_ms": 0}
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail=f"{type(e).__name__}: {e}"
+            ) from e
+        return {"overall": overall, "savings": savings, "recent": recent}
 
     @app.post("/search", response_model=SearchResponse)
     def search(req: SearchRequest) -> SearchResponse:
