@@ -1,0 +1,1353 @@
+{
+  "system_name": "bench_big_rerank",
+  "test_set_name": "queries",
+  "timestamp": "2026-06-17T05:40:35.780333Z",
+  "num_queries": 45,
+  "k": 5,
+  "avg_hit_at_k": 0.9428571428571428,
+  "avg_precision_at_k": 0.8004761904761906,
+  "avg_recall_at_k": 0.9428571428571428,
+  "avg_mrr": 0.9095238095238096,
+  "avg_retrieval_latency_ms": 1724.4571428571428,
+  "answer_evaluated": true,
+  "avg_keyword_coverage": 0.8952380952380952,
+  "avg_prompt_tokens": 528.3555555555556,
+  "avg_completion_tokens": 102.55555555555556,
+  "avg_cost_usd": 0.0,
+  "avg_generation_latency_ms": 46790.24444444444,
+  "total_cost_usd": 0.0,
+  "by_domain": {
+    "legal": {
+      "n": 12.0,
+      "hit_at_k": 0.9166666666666666,
+      "precision_at_k": 0.7680555555555556,
+      "recall_at_k": 0.9166666666666666,
+      "mrr": 0.875
+    },
+    "finance": {
+      "n": 11.0,
+      "hit_at_k": 1.0,
+      "precision_at_k": 0.7393939393939394,
+      "recall_at_k": 1.0,
+      "mrr": 0.9393939393939394
+    },
+    "health": {
+      "n": 12.0,
+      "hit_at_k": 0.9166666666666666,
+      "precision_at_k": 0.888888888888889,
+      "recall_at_k": 0.9166666666666666,
+      "mrr": 0.9166666666666666
+    }
+  },
+  "results": [
+    {
+      "query_id": "legal-001",
+      "query": "What is GDPR?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "privacy_law_en_wikipedia.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) is a European Union regulation on information privacy in the European Union (EU) and the European Economic Area (EEA). [1] It governs the processing of personal data by organizations operating within the EU and EEA, and also applies to the transfer of personal data outside the EU and EEA. The GDPR aims to enhance individuals' control and rights over their personal information and simplify international business regulations.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.8,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1369
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 473,
+        "prompt_tokens": 809,
+        "completion_tokens": 91,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 79337
+      },
+      "total_latency_ms": 80708
+    },
+    {
+      "query_id": "legal-002",
+      "query": "When did GDPR come into effect?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "privacy_law_en_wikipedia.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The General Data Protection Regulation (GDPR) came into effect on May 25, 2018. [1] It became directly applicable in all member states two years after the regulations entered into force, which was on July 20, 2018, for EEA countries such as Iceland, Liechtenstein, and Norway.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.8,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 942
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 276,
+        "prompt_tokens": 868,
+        "completion_tokens": 68,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 60717
+      },
+      "total_latency_ms": 61660
+    },
+    {
+      "query_id": "legal-003",
+      "query": "What are the key data processing principles in GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "privacy_law_en_wikipedia.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The key data processing principles in GDPR, as outlined in Article 5, include:\n\n1. Lawfulness, fairness, and transparency (Article 5(1));\n2. Personal data may not be processed unless there is at least one legal basis for doing so (Article 6);\n3. Purpose limitation;\n4. Data minimization;\n5. Accuracy;\n6. Storage limitation; and\n7. Integrity and confidentiality.\n\nThese principles are designed to ensure that personal data is processed in a way that respects the rights of individuals and maintains their trust.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.8,
+        "recall_at_k": 1.0,
+        "mrr": 0.5,
+        "retrieval_latency_ms": 1261
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 510,
+        "prompt_tokens": 766,
+        "completion_tokens": 111,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 64576
+      },
+      "total_latency_ms": 65838
+    },
+    {
+      "query_id": "legal-004",
+      "query": "What rights do data subjects have under GDPR?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "privacy_law_en_wikipedia.html"
+      ],
+      "answer": "According to Article 12-22 of the General Data Protection Regulation (GDPR), data subjects have several rights under GDPR. These include:\n\n1. The right to be informed about the processing of their personal data, including the extent of data collection, legal basis for processing, and how long data is retained.\n2. The right to request erasure of personal data related to them on certain grounds, such as non-compliance with Article 6(1) or if the legitimate interests of the controller are overridden by the interests or fundamental rights and freedoms of the data subject.\n3. The right to object to processing of their personal data for direct marketing purposes or profiling.\n4. The right to request access to their personal data and receive an overview of how it is being processed.\n5. The right to revoke consent to data processing at any time.\n\nThese rights are intended to protect the privacy and interests of individuals in relation to the processing of their personal data.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.8,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1304
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 982,
+        "prompt_tokens": 819,
+        "completion_tokens": 193,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 88854
+      },
+      "total_latency_ms": 90158
+    },
+    {
+      "query_id": "legal-005",
+      "query": "What is the role of a Data Protection Officer?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 37 of the GDPR [5], a Data Protection Officer (DPO) must be appointed by organizations that meet certain criteria, such as processing on a large scale or regular and systematic monitoring of data subjects.\n\nThe DPO is responsible for managing compliance with the GDPR, including internal controls, operations, and IT processes. They are also expected to maintain a living data inventory of all data collected and stored on behalf of the organization [4]. This role requires expertise in data protection law and practices, as well as proficiency in managing IT processes, data security, and business continuity issues.\n\nThe DPO's responsibilities include monitoring internal compliance with the GDPR, reporting data breaches, and providing guidance to other staff members. They are also responsible for ensuring that the organization is transparent about its data processing activities through privacy notices and registered with the supervisory authority [3].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1942
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 980,
+        "prompt_tokens": 683,
+        "completion_tokens": 174,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 67164
+      },
+      "total_latency_ms": 69106
+    },
+    {
+      "query_id": "legal-006",
+      "query": "Does GDPR apply to companies outside the European Union?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 3(2) of the GDPR [1], the regulation applies if a company is engaged in the \"offering of goods or services\" (regardless of whether a payment is required) to data subjects within the EEA, or is monitoring the behaviour of data subjects within the EEA. This has been interpreted as intentionally giving GDPR extraterritorial jurisdiction for non-EU establishments if they are doing business with people located in the EU [49].\n\nIn practice, this means that companies outside the EU may be subject to GDPR if they have a significant connection to the EU, such as through their online activities or data processing practices. However, it is questionable whether the EU or its member states will be able to enforce GDPR against organizations with no establishment in the EU [50].\n\nIt's worth noting that companies operating outside of the EU have invested heavily to align their business practices with GDPR, and some examples of how they do this include implementing binding corporate rules or standard contractual clauses for data protection [5].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1495
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 1064,
+        "prompt_tokens": 813,
+        "completion_tokens": 207,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 89329
+      },
+      "total_latency_ms": 90824
+    },
+    {
+      "query_id": "legal-007",
+      "query": "What permissions does the Apache 2.0 license grant?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "mit_license.txt"
+      ],
+      "answer": "According to Section 3 of the Apache License [2], the Licensor grants the following permissions:\n\n* The right to use, copy, modify, and distribute the software.\n* The right to sublicense and sell copies of the software.\n* The right to permit persons to whom the software is furnished to do so.\n\nThese permissions are granted \"free of charge\" and without any warranties or conditions.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1791
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 383,
+        "prompt_tokens": 457,
+        "completion_tokens": 80,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 35703
+      },
+      "total_latency_ms": 37494
+    },
+    {
+      "query_id": "legal-008",
+      "query": "What are the redistribution conditions under Apache 2.0?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "apache_2_license.txt",
+        "apache_2_license.txt",
+        "apache_2_license.txt"
+      ],
+      "answer": "According to Section 4 of the Apache License, Version 2.0 [1], the redistribution conditions are as follows:\n\nYou may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:\n\n(a) You must give any other recipients of the Work or Derivative Works a copy of this License; and\n\n(b) You must cause any modified files to carry prominent notices stating that You changed the files.\n\nThese conditions are specified in Section 4 of the Apache License [1].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2014
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 588,
+        "prompt_tokens": 467,
+        "completion_tokens": 121,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 44784
+      },
+      "total_latency_ms": 46799
+    },
+    {
+      "query_id": "legal-009",
+      "query": "What does the synthetic contract say about obligations?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "According to Article 8 of the GDPR, the controller is responsible for ensuring that personal data is processed in accordance with the basic principles outlined in Articles 5 and 32. The processor is also subject to these obligations.\n\nThe certification body's obligations are specified in Articles 42 and 43, which require them to ensure that the processing of personal data complies with the GDPR.\n\nThere is no specific mention of a \"synthetic contract\" in the provided context. However, it can be inferred that any contract or agreement related to data processing would need to comply with the obligations outlined in Articles 5, 8, and other relevant provisions.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2113
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.3333333333333333,
+        "answer_length_chars": 665,
+        "prompt_tokens": 283,
+        "completion_tokens": 130,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 32517
+      },
+      "total_latency_ms": 34632
+    },
+    {
+      "query_id": "legal-010",
+      "query": "What is the fine amount in the Acme Corp 2023 data breach ruling?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "gdpr_full_text.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "I don't have enough information to answer your question about the Acme Corp 2023 data breach ruling. The provided context only mentions fines for breaches of EU privacy law, such as those imposed on British Airways (£183m) and TikTok (€345 million), but does not mention Acme Corp.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2019
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 281,
+        "prompt_tokens": 496,
+        "completion_tokens": 63,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 38970
+      },
+      "total_latency_ms": 40989
+    },
+    {
+      "query_id": "legal-011",
+      "query": "What was the Data Protection Directive?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "data_protection_directive_en_wikipedia.html",
+        "data_protection_directive_en_wikipedia.html",
+        "data_protection_directive_en_wikipedia.html",
+        "privacy_law_en_wikipedia.html",
+        "gdpr_full_text.html"
+      ],
+      "answer": "The Data Protection Directive, officially Directive 95/46/EC, was a European Union directive enacted in October 1995. [3] It regulated the processing of personal data within the European Union and aimed to protect fundamental rights and freedoms in such processing. The directive covered various aspects of data protection, including legislative documents, transposition and implementation, and the role of national Data Protection Commissioners.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1280
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 446,
+        "prompt_tokens": 684,
+        "completion_tokens": 80,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 56653
+      },
+      "total_latency_ms": 57934
+    },
+    {
+      "query_id": "legal-012",
+      "query": "Genel Veri Koruma Tüzüğü neyi düzenler?",
+      "domain": "legal",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "gdpr_tr_wikipedia.html",
+        "gdpr_tr_wikipedia.html",
+        "kvkk_tr_wikipedia.html",
+        "gdpr_tr_wikipedia.html"
+      ],
+      "answer": "Genel Veri Koruma Tüzüğü (GDPR), Avrupa Birliği'nde bireylerin kişisel verilerin korunması ve gizliliğine ilişkin bir tüzüktür. [1] Bu tüzük, bireylere kendi kişisel bilgilerini kontrol altına almalarını ve AB içerisindeki şirketlerin bu tüzükle uyumlu hale getirilmesini amaçlamaktadır. [2]\n\nGDPR, kişisel verilerin işlenmesi, usage ve transferi ile ilgili hükümleri düzenler. [3] Veri sorumluları, ilgili kişilerin kişisel verilerinin işlenmesi ve kullanımı konusunda bilgilendirilmesi, bu verilerin güncel ve doğru tutulması ve ilgili kişilere veriye erişim hakları tanınması gibi yükümlülükler üstlenmektedir. [4]\n\nTüzük, 14 Nisan 2016 tarihinde kabul edilmiş ve 25 Mayıs 2018'den itibaren yürürlüktedir. [3]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2221
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 712,
+        "prompt_tokens": 717,
+        "completion_tokens": 197,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 75825
+      },
+      "total_latency_ms": 78048
+    },
+    {
+      "query_id": "legal-013",
+      "query": "Gizlilik kavramı ne anlama gelir?",
+      "domain": "legal",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "mahremiyet_tr_wikipedia.html",
+        "mahremiyet_tr_wikipedia.html"
+      ],
+      "answer": "Gizlilik, bireyin veya bir grubun kendilerini veya kendileri hakkındaki bilgileri ayırma yeteneği ve böylece kendilerini ifade ederken seçici olmaları demektir. Bu, bireylerin kendi kişisel alana girilmemesini ve bilgilerin korunmasını gerektirir.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2100
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 247,
+        "prompt_tokens": 355,
+        "completion_tokens": 64,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 25831
+      },
+      "total_latency_ms": 27932
+    },
+    {
+      "query_id": "legal-014",
+      "query": "What is the maximum penalty for violating the California Consumer Privacy Act?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "information_privacy_en_wikipedia.html",
+        "privacy_law_en_wikipedia.html",
+        "privacy_law_en_wikipedia.html"
+      ],
+      "answer": "The maximum penalty for violating the California Consumer Privacy Act (CCPA) is $7.5 million or 2% of annual gross revenue, whichever is greater [3].",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1535
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 149,
+        "prompt_tokens": 529,
+        "completion_tokens": 36,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 33807
+      },
+      "total_latency_ms": 35343
+    },
+    {
+      "query_id": "legal-015",
+      "query": "How much was TechCorp fined under the Turkish KVKK in 2024?",
+      "domain": "legal",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "gdpr_full_text.html"
+      ],
+      "answer": "I don't have enough information to answer your question about the fine imposed on TechCorp under the Turkish KVKK in 2024. The provided context only mentions fines for breaches of EU privacy law, specifically mentioning a €345 million fine for TikTok's GDPR violations, but does not mention TechCorp or the Turkish KVKK.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1610
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 320,
+        "prompt_tokens": 312,
+        "completion_tokens": 67,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 21772
+      },
+      "total_latency_ms": 23382
+    },
+    {
+      "query_id": "finance-001",
+      "query": "What is Basel III?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html",
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html"
+      ],
+      "answer": "Basel III is an internationally agreed set of measures developed by the Basel Committee on Banking Supervision in response to the financial crisis of 2007-09. [1] It aims to strengthen the regulation, supervision and risk management of banks, with minimum requirements applying to internationally active banks. [2]\n\nThe reforms cover six areas: standardized approaches for credit risk, operational risk, and output floors; a finalized leverage ratio framework; and improvements in liquidity regulations. [5] The goal is to mitigate the risk of bank runs and failures, while also promoting more resilient banks and banking systems.\n\nBasel III was developed in response to the deficiencies in financial regulation revealed by the 2008 financial crisis. It builds on previous Basel Accords, including Basel II, and aims to finalize post-crisis reforms. [4]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.4,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1640
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 853,
+        "prompt_tokens": 948,
+        "completion_tokens": 166,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 80981
+      },
+      "total_latency_ms": 82621
+    },
+    {
+      "query_id": "finance-002",
+      "query": "When were the Basel III reforms endorsed?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html"
+      ],
+      "answer": "The Basel III reforms were endorsed by the Group of Central Bank Governors and Heads of Supervision (GHOS) on two separate occasions. \n\nFirstly, the adjustments to the market risk framework were endorsed by the GHOS on 14 January 2019.\n\nSecondly, the post-crisis regulatory reforms were endorsed by the GHOS on 7 December 2017.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1713
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 327,
+        "prompt_tokens": 796,
+        "completion_tokens": 77,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 56943
+      },
+      "total_latency_ms": 58656
+    },
+    {
+      "query_id": "finance-003",
+      "query": "What is the Liquidity Coverage Ratio in Basel III?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html"
+      ],
+      "answer": "The Liquidity Coverage Ratio (LCR) is one of the two required liquidity/funding ratios introduced by Basel III. According to [2], it was approved by the Federal Reserve Board of Governors in 2014, which had more stringent definitions of HQLA and total net cash outflows compared to the Basel III rule.\n\nThe LCR measures a bank's ability to meet its short-term liquidity needs over a one-year period. It is calculated as the ratio of high-quality liquid assets (HQLA) to total net cash outflows, excluding certain privately issued mortgage-backed securities that are not eligible under the US rule [3].\n\nThe LCR was designed to ensure that banks have sufficient liquidity to meet their short-term obligations and maintain financial stability during times of stress.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.2,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1925
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 764,
+        "prompt_tokens": 782,
+        "completion_tokens": 156,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 69407
+      },
+      "total_latency_ms": 71333
+    },
+    {
+      "query_id": "finance-004",
+      "query": "What is the Net Stable Funding Ratio?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html",
+        "basel3_summary.html"
+      ],
+      "answer": "The Net Stable Funding Ratio (NSFR) is a liquidity ratio required by banks to hold sufficient stable funding to exceed the required amount of stable funding over a one-year period of extended stress. It is calculated as the available amount of stable funding divided by the required amount of stable funding, and must be greater than 100%.\n\n[1] According to Basel III, the NSFR was introduced in 2014 as part of the regulatory framework for more resilient banks and banking systems.\n\nThe NSFR requires banks to hold sufficient stable funding to meet their liquidity needs during times of stress. This ratio is designed to ensure that banks have a stable source of funding to cover their short-term liquidity needs, thereby reducing the risk of bank failures.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "mrr": 0.3333333333333333,
+        "retrieval_latency_ms": 1859
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 758,
+        "prompt_tokens": 484,
+        "completion_tokens": 147,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 41425
+      },
+      "total_latency_ms": 43285
+    },
+    {
+      "query_id": "finance-005",
+      "query": "Summarize the main goals of Basel III reforms",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "summary",
+      "retrieved_sources": [
+        "basel3_summary.html",
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html",
+        "basel3_summary.html",
+        "basel3_en_wikipedia.html"
+      ],
+      "answer": "The main goals of Basel III reforms are to strengthen the regulation, supervision, and risk management of banks. The reforms aim to make banks more resilient and restore confidence in banking systems. According to [3], Basel III standards cover six areas: standardized approach for credit risk, internal ratings based approach for credit risk, credit valuation adjustment risk, operational risk, output floor, and finalized leverage ratio framework.\n\nThe reforms also include minimum capital requirements for market risk, liquidity coverage ratio, net stable funding ratio, and economic capital. The goal is to mitigate the risk of bank runs and bank failures by setting international standards and minimums for bank capital requirements, stress tests, liquidity regulations, and leverage.\n\nOverall, the main goals of Basel III reforms are to improve banking stability, reduce systemic risk, and promote a more resilient financial system.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1614
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.6666666666666666,
+        "answer_length_chars": 938,
+        "prompt_tokens": 921,
+        "completion_tokens": 165,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 74840
+      },
+      "total_latency_ms": 76455
+    },
+    {
+      "query_id": "finance-006",
+      "query": "What was the Q4 revenue growth in the earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "The Q4 revenue growth was 18 percent year over year, as stated in the earnings report [1].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1599
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 90,
+        "prompt_tokens": 159,
+        "completion_tokens": 23,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 7067
+      },
+      "total_latency_ms": 8667
+    },
+    {
+      "query_id": "finance-007",
+      "query": "How did cloud services perform in the Q4 earnings report?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "I don't have enough information to answer your question. The provided context only mentions \"cloud revenue\" without specifying whether it was part of a Q4 earnings report or not.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1559
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.3333333333333333,
+        "answer_length_chars": 178,
+        "prompt_tokens": 150,
+        "completion_tokens": 36,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 7541
+      },
+      "total_latency_ms": 9100
+    },
+    {
+      "query_id": "finance-008",
+      "query": "Why did hardware sales decline?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "According to the context, hardware sales declined due to supply constraints. [1] This is stated in a source file named \"synthetic_earnings.md\". The exact reason for the decline is not specified in this context, but it is mentioned that supply constraints were the cause of the decline in hardware sales.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1632
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 303,
+        "prompt_tokens": 143,
+        "completion_tokens": 63,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 10116
+      },
+      "total_latency_ms": 11749
+    },
+    {
+      "query_id": "finance-009",
+      "query": "What is the current Bank of America stock price today?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "capital_adequacy_en_wikipedia.html"
+      ],
+      "answer": "I can't provide real-time information or answer questions about current stock prices. However, I can tell you that the provided context does not contain enough information to determine the current Bank of America stock price. The context only discusses a hypothetical bank's capital adequacy ratio and risk assessment, but it does not mention Bank of America specifically.\n\nIf you need to know the current stock price of Bank of America, I recommend checking a reliable financial news website or platform, such as Bloomberg or Yahoo Finance, for the most up-to-date information.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1485
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 578,
+        "prompt_tokens": 221,
+        "completion_tokens": 107,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 19776
+      },
+      "total_latency_ms": 21262
+    },
+    {
+      "query_id": "finance-010",
+      "query": "What is the projected revenue for 2026 according to Acme's forecast?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "synthetic_earnings.md"
+      ],
+      "answer": "I don't have enough information to answer your question. The provided context only mentions revenue growth and net income for Q4, but does not include any projections or forecasts for future years like 2026.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1511
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 207,
+        "prompt_tokens": 163,
+        "completion_tokens": 42,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 9434
+      },
+      "total_latency_ms": 10946
+    },
+    {
+      "query_id": "finance-011",
+      "query": "What is the purpose of banking regulation and supervision?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "bank_regulation_en_wikipedia.html",
+        "bank_regulation_en_wikipedia.html",
+        "bank_regulation_en_wikipedia.html",
+        "bank_regulation_en_wikipedia.html",
+        "bank_regulation_en_wikipedia.html"
+      ],
+      "answer": "According to [1], the purpose of banking regulation and supervision is to ensure that banks are \"safe and sound\" and to foster market transparency between banks and their customers. This aims to reduce the likelihood and impact of bank failures, which can trigger systemic risk.\n\nIn addition, prudential regulation and supervision has two main components: controlling risks and holding adequate capital, as defined by [2]. The goal is to ensure that banks are viable and resilient, thereby reducing the risk of bank failures.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1356
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 525,
+        "prompt_tokens": 698,
+        "completion_tokens": 100,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 50464
+      },
+      "total_latency_ms": 51821
+    },
+    {
+      "query_id": "finance-012",
+      "query": "Enflasyon nedir ve neden ortaya çıkar?",
+      "domain": "finance",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "enflasyon_tr_wikipedia.html",
+        "enflasyon_tr_wikipedia.html",
+        "enflasyon_tr_wikipedia.html"
+      ],
+      "answer": "Enflasyon, genellikle talep şişkinliği ve maliyet masraflarının kabarmasından ileri gelebilir [1]. Bu durum ekonomide dengelerin bozulmasıyla birlikte ortaya çıkabilir. Enflasyon türü olarak iki ana tür vardır: Talep enflasyonu ve Yerleşik enflasyon.\n\nTalep enflasyonu, genellikle yüksek maliyetler ve giderek artan harcama döngüsüyle karakterizedir [2]. Bu durum, mali tekeller, eksik rekabet koşulları, faiz haddinin yüksekliği gibi faktörlerin bir kombinasyonudur. Yerleşik enflasyon ise, bir ülkede tüm bireyleri ve tüm sektörleri etkileyen bir durumdir [3]. Bu tür enflasyon, emtia fiyatları yükseldiğinde ortaya çıkar ve ürün fiyatları yükseldiğinde de çalışanlar yaşam standartlarını korumak için daha yüksek ücretler talep eder.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1241
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 736,
+        "prompt_tokens": 525,
+        "completion_tokens": 196,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 60127
+      },
+      "total_latency_ms": 61369
+    },
+    {
+      "query_id": "finance-013",
+      "query": "What is the capital adequacy ratio?",
+      "domain": "finance",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "capital_adequacy_en_wikipedia.html",
+        "capital_adequacy_en_wikipedia.html",
+        "capital_adequacy_en_wikipedia.html",
+        "capital_adequacy_en_wikipedia.html",
+        "capital_adequacy_en_wikipedia.html"
+      ],
+      "answer": "The capital adequacy ratio (CAR) is a measure of a bank's core capital expressed as a percentage of its risk-weighted assets. It is defined as the sum of Tier 1 and Tier 2 capital divided by risk-weighted assets.\n\n[1] [3]\n\nIn simple terms, CAR determines a bank's capacity to meet time liabilities and other risks such as credit and operational risk. It acts as a \"cushion\" for potential losses, protecting depositors and maintaining confidence in the banking system.\n\n[2]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1781
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 472,
+        "prompt_tokens": 889,
+        "completion_tokens": 108,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 98737
+      },
+      "total_latency_ms": 100519
+    },
+    {
+      "query_id": "finance-014",
+      "query": "What was Turkey's inflation rate in December 2027?",
+      "domain": "finance",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "enflasyon_tr_wikipedia.html"
+      ],
+      "answer": "I don't have enough information to answer your question about Turkey's inflation rate in December 2027, as the provided context only covers information up to June 8, 2023. The context does not include any data or forecasts for future months, including December 2027.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1581
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 266,
+        "prompt_tokens": 338,
+        "completion_tokens": 58,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 27330
+      },
+      "total_latency_ms": 28912
+    },
+    {
+      "query_id": "finance-015",
+      "query": "What was JPMorgan's exact Tier 1 capital ratio in Q3 2025?",
+      "domain": "finance",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "basel3_en_wikipedia.html",
+        "basel3_en_wikipedia.html"
+      ],
+      "answer": "I cannot provide financial information about a company that has not been reported. Is there anything else I can help you with?",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1676
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 126,
+        "prompt_tokens": 319,
+        "completion_tokens": 25,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 21722
+      },
+      "total_latency_ms": 23399
+    },
+    {
+      "query_id": "health-001",
+      "query": "What is considered high blood pressure?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), high blood pressure is consistently at or above 130/80 mm Hg. [1] This is the definition provided on the CDC website, specifically in the section titled \"What is High Blood Pressure?\"",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1774
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 250,
+        "prompt_tokens": 494,
+        "completion_tokens": 54,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 46492
+      },
+      "total_latency_ms": 48269
+    },
+    {
+      "query_id": "health-002",
+      "query": "What are the symptoms of high blood pressure?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to [3], high blood pressure typically has no signs or symptoms. However, it can cause problems for various parts of the body, such as the heart, brain, kidneys, and eyes. The CDC states that \"no matter your age, you can take steps each day to keep your blood pressure in a healthy range\" ([3]).",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2831
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 304,
+        "prompt_tokens": 717,
+        "completion_tokens": 70,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 57095
+      },
+      "total_latency_ms": 59927
+    },
+    {
+      "query_id": "health-003",
+      "query": "What organs can high blood pressure damage?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html",
+        "cdc_hypertension.html"
+      ],
+      "answer": "According to the Centers for Disease Control and Prevention (CDC), high blood pressure can damage several important organs, including:\n\n* Heart\n* Brain\n* Kidneys\n* Eyes\n\nThese organs are highlighted in an illustration provided by the CDC, which shows the potential health problems caused by high blood pressure.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1520
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 311,
+        "prompt_tokens": 615,
+        "completion_tokens": 61,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 40508
+      },
+      "total_latency_ms": 42028
+    },
+    {
+      "query_id": "health-004",
+      "query": "How is blood pressure measured?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "cdc_hypertension.html"
+      ],
+      "answer": "Blood pressure is typically measured using a sphygmomanometer, which is a device that wraps around the upper arm. The device has two parts: an inflatable cuff and a manometer. [1]\n\nTo measure blood pressure, the cuff is wrapped around the upper arm and inflated to cut off blood flow. The pressure is then slowly released while listening for the sound of blood flowing back into the artery with a stethoscope. This is called auscultation. [1]\n\nThe systolic pressure (the higher number) is recorded when the cuff is first removed, and the diastolic pressure (the lower number) is recorded after the cuff has been released for a few minutes. The measurements are usually taken at the same time to get an accurate reading.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1641
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 719,
+        "prompt_tokens": 176,
+        "completion_tokens": 154,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 25950
+      },
+      "total_latency_ms": 27593
+    },
+    {
+      "query_id": "health-005",
+      "query": "What is diabetes?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "diyabet_tr_wikipedia.html",
+        "who_diabetes.html"
+      ],
+      "answer": "Diabetes is a chronic disease that occurs when the pancreas does not produce enough insulin or when the body cannot effectively use the insulin it produces [1]. It is characterized by high blood glucose levels, which can lead to serious damage to various bodily systems over time.\n\nThe term \"diabetes\" comes from the Latin word \"mellis,\" meaning \"sweet,\" as it was initially thought that people with diabetes had a sweet-tasting breath or urine. However, this misconception has been largely debunked [2].\n\nThere are two main types of diabetes: Type 1 and Type 2. Type 1 diabetes is characterized by deficient insulin production and requires daily administration of insulin, while the exact cause and prevention methods for Type 2 diabetes are still unknown [3].",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1737
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 761,
+        "prompt_tokens": 527,
+        "completion_tokens": 155,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 53252
+      },
+      "total_latency_ms": 54993
+    },
+    {
+      "query_id": "health-006",
+      "query": "What are the main types of diabetes?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "According to the provided context, there are two main types of diabetes mentioned:\n\n1. Type 1 diabetes: characterized by deficient insulin production and requiring daily administration of insulin.\n2. Type 2 diabetes: affects how the body uses sugar (glucose) for energy, stopping the body from using insulin properly.\n\nNote that these are the only two types explicitly mentioned in the provided context.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1826
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 403,
+        "prompt_tokens": 307,
+        "completion_tokens": 78,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 26850
+      },
+      "total_latency_ms": 28677
+    },
+    {
+      "query_id": "health-007",
+      "query": "What complications can diabetes cause?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_diabetes.html",
+        "who_diabetes.html"
+      ],
+      "answer": "According to [2], diabetes can cause several complications, including:\n\n* Blindness due to damage to blood vessels in the eyes\n* Kidney failure\n* Heart attacks\n* Stroke\n* Lower limb amputation (due to nerve damage and poor blood flow)\n\nThese complications can occur over time as a result of uncontrolled diabetes. Regular screening and treatment for complications can help prevent or delay these outcomes.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1859
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 405,
+        "prompt_tokens": 479,
+        "completion_tokens": 82,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 38489
+      },
+      "total_latency_ms": 40349
+    },
+    {
+      "query_id": "health-008",
+      "query": "How many participants were in the clinical study?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "synthetic_study.md"
+      ],
+      "answer": "According to the context, there were 1200 participants in the clinical study. [1]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1613
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 81,
+        "prompt_tokens": 147,
+        "completion_tokens": 20,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 6623
+      },
+      "total_latency_ms": 8237
+    },
+    {
+      "query_id": "health-009",
+      "query": "What study design was used in the clinical study?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "nci_obesity_en.html"
+      ],
+      "answer": "The context does not provide enough information to determine the specific study design used in the clinical study. The text mentions two NIH-based initiatives, but it does not specify which one is being referred to or what type of study design (e.g., randomized controlled trial, observational study) was used.\n\nWithout more information, it is impossible to accurately answer the question about the study design.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1665
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.5,
+        "answer_length_chars": 412,
+        "prompt_tokens": 238,
+        "completion_tokens": 76,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 24073
+      },
+      "total_latency_ms": 25742
+    },
+    {
+      "query_id": "health-010",
+      "query": "What is the discovered cure for type 1 diabetes from 2025?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "who_diabetes.html"
+      ],
+      "answer": "I couldn't find any information on a discovered cure for type 1 diabetes from 2025. The provided context only discusses the prevalence of diabetes, its consequences, and ways to prevent or treat it, but does not mention a cure for type 1 diabetes specifically.\n\nIn fact, there is currently no known cure for type 1 diabetes, although researchers are working on developing new treatments and therapies to manage the condition.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2099
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 425,
+        "prompt_tokens": 332,
+        "completion_tokens": 85,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 30646
+      },
+      "total_latency_ms": 32746
+    },
+    {
+      "query_id": "health-011",
+      "query": "Obezite nedir ve sağlığı nasıl etkiler?",
+      "domain": "health",
+      "difficulty": "easy",
+      "type": "factual",
+      "retrieved_sources": [
+        "obezite_tr_wikipedia.html",
+        "obezite_tr_wikipedia.html",
+        "obezite_tr_wikipedia.html",
+        "obezite_tr_wikipedia.html"
+      ],
+      "answer": "Obezite, vücutta aşırı yağ birikiminin olduğu bir durumdur. Vücut kitle indeksi (VKİ) ile değerlendirilir. Genellikle ağırlığının kişinin boyunun karesine bölünmesiyle elde edilen bir ölçüm olan VKİ 25 kg/m² ile 30 kg/m² arasında olanlar obez olarak kabul edilirler. Obezite, özellikle kalp rahatsızlığı, tip 2 diyabet, obstrüktif uyku apnesi, belirli kanser türleri ve osteoartrit gibi hastalıkların olasılığını artırır.\n\nObezite, vücutta aşırı yağ birikiminin olduğu bir durumdur ve bu durum vücut kitle indeksi (VKİ) ile değerlendirilir. Obezite, erişimli kronik hastalığın başlıca risk faktörlerinden biridir ve sağlık açısından ciddi sorunlara neden olabilir.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 1868
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 664,
+        "prompt_tokens": 861,
+        "completion_tokens": 207,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 98283
+      },
+      "total_latency_ms": 100155
+    },
+    {
+      "query_id": "health-012",
+      "query": "Kanser nasıl oluşur?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "kanser_tr_wikipedia.html",
+        "kanser_tr_wikipedia.html"
+      ],
+      "answer": "Kanser nasıl oluşur? Kanser, DNA'nın hasar alması sonucu hücrelerin kontrolsüz bir şekilde büyümesi ve çoğalmasıdır. Bu hasar, hücrelerde sınırsız proliferasyon yetisi, büyümesini engelleyen faktörlere karşı duyarsız olması, hücrelerinin ölümsüzlüğü (apoptozis görülmemesi) ve yeni damarların oluşumunu uyarabilmesi (angiogenezis) gibi nedenler ile gerçekleşir. [1], [6]",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2143
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 370,
+        "prompt_tokens": 587,
+        "completion_tokens": 118,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 56453
+      },
+      "total_latency_ms": 58599
+    },
+    {
+      "query_id": "health-013",
+      "query": "What are the main risk factors for cardiovascular disease?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "factual",
+      "retrieved_sources": [
+        "who_cvd_en.html",
+        "who_cvd_en.html",
+        "who_cvd_en.html"
+      ],
+      "answer": "According to the World Health Organization (WHO), the most important behavioural risk factors of heart disease and stroke are [2]:\n\n1. Unhealthy diet\n2. Physical inactivity\n3. Tobacco use\n4. Harmful use of alcohol.\n\nAdditionally, environmental risk factor air pollution is also an important factor [2]. These risk factors can be measured in primary care facilities and indicate an increased risk of heart attack, stroke, heart failure, and other complications.",
+      "retrieval": {
+        "hit_at_k": true,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "mrr": 1.0,
+        "retrieval_latency_ms": 2128
+      },
+      "answer_metrics": {
+        "keyword_coverage": 1.0,
+        "answer_length_chars": 460,
+        "prompt_tokens": 546,
+        "completion_tokens": 94,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 46291
+      },
+      "total_latency_ms": 48421
+    },
+    {
+      "query_id": "health-014",
+      "query": "What will the global obesity rate be in 2030?",
+      "domain": "health",
+      "difficulty": "hard",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "who_obesity_en.html",
+        "who_obesity_en.html",
+        "who_obesity_en.html",
+        "who_obesity_en.html",
+        "nci_obesity_en.html"
+      ],
+      "answer": "According to [3] (source: who_obesity_en.html), the WHO has recognized the need to tackle the global obesity crisis and aims to ensure no increase in childhood overweight by 2025, with a target to halt the rise of diabetes and obesity by 2025. However, there is no specific information provided on the expected global obesity rate for 2030.\n\nThe only relevant information from [4] (source: who_obesity_en.html) mentions that if nothing is done, the global costs of overweight and obesity are predicted to reach US$ 3 trillion per year by 2030. However, it does not provide a specific percentage or rate for the global obesity population in 2030.\n\nTherefore, I cannot provide an accurate answer to this question based on the provided context.",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 2360
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 741,
+        "prompt_tokens": 814,
+        "completion_tokens": 161,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 79222
+      },
+      "total_latency_ms": 81584
+    },
+    {
+      "query_id": "health-015",
+      "query": "What dosage of metformin should I personally take for my diabetes?",
+      "domain": "health",
+      "difficulty": "medium",
+      "type": "no_answer",
+      "retrieved_sources": [
+        "diyabet_tr_wikipedia.html"
+      ],
+      "answer": "I can't provide medical advice, including dosage recommendations for metformin or any other medication. If you have questions about your specific treatment plan, I recommend discussing them with your healthcare provider. Is there anything else I can help you with?",
+      "retrieval": {
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieval_latency_ms": 1871
+      },
+      "answer_metrics": {
+        "keyword_coverage": 0.0,
+        "answer_length_chars": 264,
+        "prompt_tokens": 342,
+        "completion_tokens": 49,
+        "cost_usd": 0.0,
+        "generation_latency_ms": 23585
+      },
+      "total_latency_ms": 25456
+    }
+  ],
+  "extra": {
+    "refusal_accuracy": 0.5
+  }
+}
