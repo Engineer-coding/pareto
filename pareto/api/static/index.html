@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pareto — Cost-Optimized RAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F5F7;
+    --surface: #FFFFFF;
+    --ink: #16181D;
+    --muted: #6B7280;
+    --line: #E3E5E9;
+    --cache: #15803D;   --cache-bg: #DCFCE7;
+    --route: #1D4ED8;   --route-bg: #DBEAFE;
+    --rerank: #6D28D9;  --rerank-bg: #EDE9FE;
+    --accent: #16181D;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans); background: var(--bg); color: var(--ink);
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
+    padding: 32px 20px; max-width: 860px; margin: 0 auto;
+  }
+  header { margin-bottom: 28px; }
+  .brand {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .brand h1 {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .brand .tag {
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+  }
+  .brand .tag b { color: var(--cache); font-weight: 500; }
+
+  /* mini dashboard */
+  .dash {
+    display: flex; gap: 0; margin: 18px 0 26px; border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden; background: var(--surface);
+  }
+  .dash .cell {
+    flex: 1; padding: 12px 16px; border-right: 1px solid var(--line);
+  }
+  .dash .cell:last-child { border-right: none; }
+  .dash .num { font-family: var(--mono); font-size: 18px; font-weight: 500; }
+  .dash .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .dash .num.save { color: var(--cache); }
+
+  /* query box */
+  .ask {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px;
+  }
+  .ask textarea {
+    width: 100%; border: none; resize: vertical; min-height: 52px;
+    font-family: var(--sans); font-size: 16px; color: var(--ink);
+    outline: none; background: transparent;
+  }
+  .controls {
+    display: flex; align-items: center; gap: 16px; margin-top: 12px;
+    padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap;
+  }
+  .toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; user-select: none; }
+  .toggle input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .spacer { flex: 1; }
+  button.go {
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    background: var(--ink); color: #fff; border: none; border-radius: 8px;
+    padding: 9px 22px; cursor: pointer; transition: opacity .15s;
+  }
+  button.go:hover { opacity: .85; }
+  button.go:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* result */
+  #result { margin-top: 22px; }
+  .thinking { color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 8px 2px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 20px; margin-top: 12px;
+  }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .badge {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 6px; display: inline-flex; gap: 5px; align-items: center;
+  }
+  .badge.cache { background: var(--cache-bg); color: var(--cache); }
+  .badge.route { background: var(--route-bg); color: var(--route); }
+  .badge.rerank { background: var(--rerank-bg); color: var(--rerank); }
+  .answer { font-size: 15.5px; white-space: pre-wrap; }
+  .answer .li { color: var(--muted); }
+  .answer ul { margin: 8px 0 8px 20px; }
+  .sources { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .sources .h { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+  .src { font-family: var(--mono); font-size: 12.5px; color: var(--route); margin-bottom: 3px; }
+  .foot {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+    display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  .foot .save { color: var(--cache); font-weight: 500; }
+  .err { color: #B91C1C; font-family: var(--mono); font-size: 13px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .card { animation: rise .25s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Pareto</h1>
+    <span class="tag">cost-optimized RAG · <b>%80 kalite, %20 maliyet</b></span>
+  </div>
+  <div class="dash" id="dash">
+    <div class="cell"><div class="num" id="d-count">—</div><div class="lbl">sorgu</div></div>
+    <div class="cell"><div class="num" id="d-cache">—</div><div class="lbl">cache hit</div></div>
+    <div class="cell"><div class="num save" id="d-saved">—</div><div class="lbl">tasarruf</div></div>
+    <div class="cell"><div class="num" id="d-index">—</div><div class="lbl">chunk</div></div>
+  </div>
+</header>
+
+<div class="ask">
+  <textarea id="q" placeholder="Bir soru sorun — örn. What rights do data subjects have under GDPR?"></textarea>
+  <div class="controls">
+    <label class="toggle"><input type="checkbox" id="t-router"> Router</label>
+    <label class="toggle"><input type="checkbox" id="t-rerank"> Rerank</label>
+    <span class="spacer"></span>
+    <button class="go" id="go">Sor</button>
+  </div>
+</div>
+
+<div id="result"></div>
+
+<script>
+const API = window.location.origin;
+
+async function loadStats() {
+  try {
+    const r = await fetch(`${API}/stats?last=1`);
+    const s = await r.json();
+    const o = s.overall || {};
+    document.getElementById('d-count').textContent = o.count ?? 0;
+    const rate = (o.cache_hit_rate ?? 0) * 100;
+    document.getElementById('d-cache').textContent = rate.toFixed(0) + '%';
+    const savedMs = (s.savings && s.savings.saved_latency_ms) || 0;
+    document.getElementById('d-saved').textContent = (savedMs / 1000).toFixed(1) + 's';
+  } catch (e) { /* stats optional */ }
+  try {
+    const h = await fetch(`${API}/health`);
+    const hd = await h.json();
+    document.getElementById('d-index').textContent = hd.index_size ?? '—';
+  } catch (e) {}
+}
+
+function fmtMs(ms) {
+  if (ms == null) return '—';
+  return ms < 1000 ? ms + 'ms' : (ms / 1000).toFixed(1) + 's';
+}
+
+async function ask() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('go');
+  const out = document.getElementById('result');
+  btn.disabled = true;
+  out.innerHTML = '<div class="thinking">Düşünüyor… (cache hit anlıktır; LLM çağrısı CPU\'da sürebilir)</div>';
+
+  const body = {
+    question: q,
+    use_router: document.getElementById('t-router').checked,
+    use_rerank: document.getElementById('t-rerank').checked,
+  };
+
+  try {
+    const r = await fetch(`${API}/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) {
+      const detail = await r.text();
+      out.innerHTML = `<div class="card"><div class="err">Hata ${r.status}: ${detail}</div></div>`;
+      btn.disabled = false; return;
+    }
+    const d = await r.json();
+    render(d);
+  } catch (e) {
+    out.innerHTML = `<div class="card"><div class="err">Bağlantı hatası: ${e.message}. Server çalışıyor mu? (pareto serve)</div></div>`;
+  }
+  btn.disabled = false;
+  loadStats();
+}
+
+function render(d) {
+  const out = document.getElementById('result');
+  let badges = '';
+  if (d.cache_hit) {
+    const sim = d.cache_similarity ? ` ${(d.cache_similarity).toFixed(3)}` : '';
+    badges += `<span class="badge cache">⚡ cache hit${sim}</span>`;
+  }
+  if (d.route) {
+    const tier = d.model_tier ? ` · ${d.model_tier}` : '';
+    badges += `<span class="badge route">🧭 ${d.route}${tier}</span>`;
+  }
+  if (d.reranked) {
+    badges += `<span class="badge rerank">🔄 rerank</span>`;
+  }
+
+  const srcSet = [...new Set((d.citations || []).map(c => c.source))];
+  const sources = srcSet.length
+    ? `<div class="sources"><div class="h">Kaynaklar</div>${srcSet.map(s => `<div class="src">${s}</div>`).join('')}</div>`
+    : '';
+
+  const st = d.stats || {};
+  let foot = '';
+  if (d.cache_hit) {
+    const saved = st.saved_latency_ms || 0;
+    foot = `<span>${fmtMs(st.total_latency_ms)}</span>`
+         + `<span class="save">↩ ${fmtMs(saved)} + LLM çağrısı tasarruf</span>`;
+  } else {
+    foot = `<span>${fmtMs(st.total_latency_ms)} toplam</span>`
+         + `<span>${fmtMs(st.generation_latency_ms)} generation</span>`
+         + `<span>${st.total_tokens || 0} token (${st.prompt_tokens || 0} prompt)</span>`
+         + `<span>${(st.model || '').replace('ollama/', '')}</span>`;
+  }
+
+  out.innerHTML = `<div class="card">
+    ${badges ? `<div class="badges">${badges}</div>` : ''}
+    <div class="answer">${fmtAnswer(d.answer)}</div>
+    ${sources}
+    <div class="foot">${foot}</div>
+  </div>`;
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+function fmtAnswer(s) {
+  // Escape first (XSS-safe), then apply minimal markdown rendering.
+  let h = escapeHtml(s);
+  h = h.replace(/^\s*[\*\-]\s+(.+)$/gm, '<span class="li">•</span> $1');  // bullets
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');                  // bold
+  return h;
+}
+
+document.getElementById('go').addEventListener('click', ask);
+document.getElementById('q').addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') ask();
+});
+loadStats();
+</script>
+</body>
+</html>

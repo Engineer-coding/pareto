@@ -22,6 +22,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from pareto.generation import LiteLLMClient, LLMConfig
@@ -199,6 +200,12 @@ def create_app(
         )
 
     # -- routes -------------------------------------------------------------
+
+    STATIC_DIR = Path(__file__).parent / "static"
+
+    @app.get("/", include_in_schema=False)
+    def index():
+        return FileResponse(STATIC_DIR / "index.html")
 
     @app.get("/health")
     def health() -> dict[str, Any]:
